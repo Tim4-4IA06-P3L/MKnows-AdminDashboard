@@ -8,7 +8,9 @@ export default async function loginAdmin(email, password) {
 			email, password
 		}),
 	});
-	
-	if(!res.ok) throw new Error("Failed to log in");
-	return res.json();
+	if(res.ok) {
+		return res.json();
+	} else {
+		throw new Error("Invalid email or password");
+	}	
 }
