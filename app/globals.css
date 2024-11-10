@@ -18,9 +18,6 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-poppins);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: 100vh;
 }
 

@@ -61,7 +61,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex items-center justify-center h-screen">
       {showToast && (
         <Toast message={error} onClose={() => setShowToast(false)} />
       )}

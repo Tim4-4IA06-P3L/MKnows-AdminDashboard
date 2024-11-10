@@ -3,7 +3,6 @@ import { serialize } from "cookie";
 export async function GET(request) {
   const cookiesHeader = request.headers.get('cookie') || '';
   const token = cookiesHeader.split("=")[1];
-	console.log(token);
 
   if (!token) {
     return new Response(JSON.stringify({ message: "Already logged out"}), {
