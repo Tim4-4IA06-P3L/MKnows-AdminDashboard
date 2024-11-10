@@ -2,6 +2,9 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import React from "react";
+import Spinner from "../components/Spinner";
+import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
 
 const page = () => {
   const router = useRouter();
@@ -36,16 +39,15 @@ const page = () => {
   if (!authorized) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-2xl text-center">Loading...</p>
+        <Spinner />
       </div>
     );
   }
   return (
-    <>
-      <button type="submit" onClick={logOut}>
-        Log Out
-      </button>
-    </>
+    <main className="h-screen">
+			<Header />
+			<Sidebar logOut={logOut} />
+    </main>
   );
 };
 
