@@ -36,7 +36,7 @@ export default function Home() {
     e.preventDefault();
 
     try {
-      const valid = await fetch("/api/auth", {
+      const loginReq = await fetch("/api/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export default function Home() {
         }),
       });
 
-      if (valid.status == 200) {
+      if (loginReq.status == 200) {
         router.push("/dashboard");
       } else {
         setError("Invalid email or password");
