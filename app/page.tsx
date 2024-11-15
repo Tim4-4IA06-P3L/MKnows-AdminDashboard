@@ -1,17 +1,28 @@
 "use client";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import Toast from "./components/Toast";
 
 export default function Home() {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, togglePassword] = useState(false);
   const [error, setError] = useState("");
   const [showToast, setShowToast] = useState(false);
   const router = useRouter();
+	
+	const checkValid = async () => {
+		const valid = await fetch("api/validate");
+		if (valid.status == 200) {
+			router.push("/dashboard");
+		}
+	};
+	useEffect(() => {
+		checkValid();
+	}, []);
 
   const togglePasswordVisible = () => {
     togglePassword(!showPassword);
