@@ -13,18 +13,18 @@ const Sidebar = ({ logOut }) => {
 	const width = useViewportWidth();
 	
   return (
-    <aside className={`transition-transform duration-300 linear bg-[#242628] float-left h-[90%] pr-8 w-max flex flex-col justify-between
-				${width < 640 ? "absolute top-[10%]" : "relative top-0"}
+    <aside className={`transition-transform duration-300 linear bg-[#242628] float-left 
+				h-[90%] pr-8 w-[220px] flex flex-col justify-between fixed
 				${(width < 640 && toggleDropMobile == 0) ? "-translate-x-[100%]" : "translate-x-0"}`}>
-			<div className={`cursor-pointer flex flex-col justify-center items-center 
-					space-y-2 bg-neutral-700 h-16 w-16 p-4 left-[100%] ${width < 640 ? "absolute" : "hidden"}`}
+			<div className={`cursor-pointer flex flex-col justify-center items-center
+					space-y-2 bg-[#242628] h-16 w-16 p-4 left-[100%] ${width < 640 ? "absolute" : "hidden"}`}
 					onClick={setActive}>
 				<div className={`w-[90%] rounded-lg p-0.5 bg-[#FFFFFF] transform transition-transform duration-300 
-						${toggleDropMobile == 1 ? "bg-red translate-y-3 rotate-45":"bg-[#FFFFFF] translate-y-0 rotate-0"}`}></div>
+						${toggleDropMobile == 1 ? "bg-red-500 translate-y-3 rotate-45":"bg-[#FFFFFF] translate-y-0 rotate-0"}`}></div>
 				<div className={`w-[90%] rounded-lg p-0.5 bg-[#FFFFFF] transform transition-all duration-800 
-						${toggleDropMobile == 1 ? "bg-red opacity-0":"opacity-100"}`}></div>
+						${toggleDropMobile == 1 ? "bg-red-500 opacity-0":"opacity-100"}`}></div>
 				<div className={`w-[90%] rounded-lg p-0.5 bg-[#FFFFFF] transform transition-transform duration-300 
-						${toggleDropMobile == 1 ? "bg-red -translate-y-3 -rotate-45":"bg-[FFFFFF] translate-y-0 rotate-0"}`}></div>
+						${toggleDropMobile == 1 ? "bg-red-500 -translate-y-3 -rotate-45":"bg-[FFFFFF] translate-y-0 rotate-0"}`}></div>
 			</div>
       <ul className="text-white font-semibold ml-8 mt-32 space-y-8">
         <li
