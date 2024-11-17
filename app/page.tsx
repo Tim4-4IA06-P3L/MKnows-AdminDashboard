@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import Toast from "./components/Toast";
+import Spinner from "./components/Spinner";
 
 export default function Home() {
 
@@ -12,14 +13,18 @@ export default function Home() {
   const [showPassword, togglePassword] = useState(false);
   const [error, setError] = useState("");
   const [showToast, setShowToast] = useState(false);
+	const [authorized, setAuthorized] = useState(true);
   const router = useRouter();
 	
 	const checkValid = async () => {
 		const valid = await fetch("api/validate");
-		if (valid.status == 200) {
+		if (valid.status == 400) {
+			setAuthorized(false);
+		} else {
 			router.push("/dashboard");
 		}
 	};
+	
 	useEffect(() => {
 		checkValid();
 	}, []);
@@ -70,7 +75,17 @@ export default function Home() {
       handleToast();
     }
   };
-
+	
+	if (authorized) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
+  }
+	
+	const sleep = async () => await setTimeout(() => console.log("Show page"), 5000);
+	
   return (
     <div className="flex items-center justify-center h-screen">
       {showToast && (
