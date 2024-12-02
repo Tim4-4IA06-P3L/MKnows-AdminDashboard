@@ -91,7 +91,7 @@ export default function Home() {
       {showToast && (
         <Toast message={error} onClose={() => setShowToast(false)} />
       )}
-      <div className="w-2/5">
+      <div className="min-[320px]:max-sm:w-4/5 sm:w-2/5">
         <div className="w-full">
           <div className="flex items-center flex-col pb-10 w-full">
             <img
