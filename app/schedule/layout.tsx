@@ -11,10 +11,10 @@ import Sidebar from "../components/Sidebar";
 const poppins = Poppins({
   subsets: ["latin"],
   display: "swap",
-  weight: "100",
+  weight: "300",
 });
 
-export default function RootLayout({
+export default function ScheduleLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -57,10 +57,10 @@ export default function RootLayout({
   }
 
   return (
-    <main className="h-screen">
-      <Header />
-      <Sidebar logOut={logOut} />
-      {children}
-    </main>
+		<main className={`${poppins.className} antialiased h-screen`}>
+			<Header />
+			<Sidebar logOut={logOut} />
+			{children}
+		</main>
   );
 }

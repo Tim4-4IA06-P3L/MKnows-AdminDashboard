@@ -14,7 +14,7 @@ const poppins = Poppins({
   weight: "300",
 });
 
-export default function RootLayout({
+export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -57,14 +57,10 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en">
-      <body className={`${poppins.className} antialiased`}>
-				<main className="h-screen">
-					<Header />
-					<Sidebar logOut={logOut} />
-					{children}
-				</main>
-			</body>
-		</html>
+		<main className={`${poppins.className} antialiased h-screen`}>
+			<Header />
+			<Sidebar logOut={logOut} />
+			{children}
+		</main>
   );
 }
