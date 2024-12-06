@@ -17,7 +17,8 @@ const Sidebar = ({ logOut }) => {
 				h-[90%] pr-8 w-[220px] flex flex-col justify-between fixed z-[100]
 				${(width < 768 && toggleDropMobile == 0) ? "-translate-x-[100%]" : "translate-x-0"}`}>
 			<div className={`cursor-pointer flex flex-col justify-center items-center
-					space-y-1 bg-[#242628] h-8 w-10 p-2 left-[100%] ${width < 768 ? "absolute" : "hidden"}`}
+					space-y-1 bg-[#242628] h-8 w-10 p-2 left-[100%] ${width < 768 ? "absolute" : "hidden"}
+					${toggleDropMobile == 1 ? "opacity-100" : "opacity-20"}`}
 					onClick={setActive}>
 				<div className={`w-[90%] rounded-lg p-0.5 bg-[#FFFFFF] transform transition-transform duration-300 
 						${toggleDropMobile == 1 ? "bg-red-500 translate-y-2 rotate-45":"bg-[#FFFFFF] translate-y-0 rotate-0"}`}></div>
