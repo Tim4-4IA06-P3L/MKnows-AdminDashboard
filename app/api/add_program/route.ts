@@ -17,7 +17,7 @@ export async function POST(request) {
 				files.map(async (file) => {
 					let fileFormData = new FormData();
 					fileFormData.append("files", file);
-					let response = await fetch("http://localhost:1337/api/upload", {
+					let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
 						method: 'POST',
 						headers: {
 							"Authorization": `Bearer ${token}`,
@@ -28,10 +28,9 @@ export async function POST(request) {
 					return res_json[0].id;
 				})
 			);
-			console.log(filesIdArr);
 			
 			// POST the Program entry
-			const responseProgram = await fetch("http://localhost:1337/api/our-programs", {
+			const responseProgram = await fetch(`${process.env.STRAPI_URL}/api/our-programs`, {
 				method: 'POST',
 				headers: {
 					"Content-Type": "application/json",
@@ -43,8 +42,8 @@ export async function POST(request) {
 						"Level": level,
 						"Category": categoryId,
 						"Description": desc,
-						"Thumbnail": filesIdArr[0],
-						"Document": filesIdArr[1]
+						"Document": filesIdArr[0],
+						"Thumbnail": filesIdArr[1]
 					}
 				})
 			});

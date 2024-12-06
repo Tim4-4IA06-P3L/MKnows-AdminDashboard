@@ -1,5 +1,5 @@
 export default async function authenticateAdmin(email, password) {
-	const res = await fetch("http://localhost:1337/admin/login", {
+	const res = await fetch(`${process.env.STRAPI_URL}/admin/login`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
