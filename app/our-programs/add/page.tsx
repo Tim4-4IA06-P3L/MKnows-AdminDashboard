@@ -3,10 +3,11 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import getCategories from "../../middleware/getCategories";
 import Toast from "../../components/Toast";
+import Spinner from "../../components/Spinner";
 
 const page = () => {
   const [title, setTitle] = useState("");
-  const [level, setLevel] = useState("beginner");
+  const [level, setLevel] = useState("Beginner");
   const [desc, setDesc] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -14,6 +15,9 @@ const page = () => {
   const [file, setFile] = useState(null);
   const [imageName, setImageName] = useState("Upload Thumbnail");
   const [image, setImage] = useState(null);
+	const [isSubmit, setIsSubmit] = useState(false);
+	const [showToast, setShowToast] = useState(false);
+	const [toastMsg, setToastMsg] = useState("");
   const router = useRouter();
 
   const changeTitle = (e) => {
@@ -33,24 +37,31 @@ const page = () => {
   };
 
   const changeFile = (e) => {
-    if (e.target.files[0] != null) {
+    if (e.target.files[0] != null && e.target.accept.includes(e.target.files[0].type)) {
       setFileName(e.target.files[0].name);
       setFile(e.target.files[0]);
     } else {
+			e.target.value = null;
       setFileName("Upload PDF file");
       setFile(null);
     }
   };
 
   const changeImage = (e) => {
-    if (e.target.files[0] != null) {
+    if (e.target.files[0] != null && e.target.accept.includes(e.target.files[0].type)) {
       setImageName(e.target.files[0].name);
       setImage(e.target.files[0]);
     } else {
+			e.target.value = null;
       setImageName("Upload Thumbnail");
       setImage(null);
     }
   };
+	
+	const handleToast = () => {
+		setShowToast(true);
+		setTimeout(() => setShowToast(false), 5000);
+	};
 
   const getCategoriesResponse = async () => {
     const response = await getCategories();
@@ -61,26 +72,37 @@ const page = () => {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      const formData = new FormData();
-      formData.append("files", file);
-      formData.append("files", image);
-      formData.append("title", title);
-      formData.append("level", level);
-      formData.append("category", selectedCategory);
-      formData.append("desc", desc);
+			if (title && desc && selectedCategory && file && image) {
+				setIsSubmit(true);
+				const formData = new FormData();
+				formData.append("files", file);
+				formData.append("files", image);
+				formData.append("title", title);
+				formData.append("level", level);
+				formData.append("category", selectedCategory);
+				formData.append("desc", desc);
 
-      const response = await fetch("/api/add_program", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        router.push("/our-programs");
-      } else {
-        console.log(response.status);
-      }
+				const response = await fetch("/api/add_program", {
+					method: "POST",
+					body: formData,
+				});
+		
+				if (response.ok) {
+					router.push("/our-programs");
+				} else {
+					setIsSubmit(false);
+					setToastMsg("Request failed");
+					handleToast();
+				}
+			} else {
+				setIsSubmit(false);
+				setToastMsg("Incomplete inputs");
+				handleToast();
+			}
     } catch (error) {
-			
+			setIsSubmit(false);
+			setToastMsg("Something's wrong");
+			handleToast();
 		}
   };
 
@@ -90,6 +112,14 @@ const page = () => {
 
   return (
     <div className="relative flex flex-col justify-center items-center md:ml-[220px] p-8 z-0">
+			{isSubmit && 
+			<div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-100 opacity-70 z-[100]">
+				<Spinner />
+			</div>}
+			{showToast && 
+			<div className="fixed top-20 right-8 w-full z-[100]">
+				<Toast message={toastMsg} onClose={() => setShowToast(false)} />
+			</div>}
       <h1 className="text-3xl md:text-6xl font-bold">Add a Program</h1>
 
       <section className="flex justify-center mt-8 w-full">
@@ -124,13 +154,13 @@ const page = () => {
                 onChange={(e) => changeLevel(e)}
                 className="w-full py-3 rounded-md border-neutral-500 border-2"
               >
-                <option key="beginner" value="beginner">
+                <option key="Beginner" value="Beginner">
                   Beginner
                 </option>
-                <option key="intermediate" value="intermediate">
+                <option key="Intermediate" value="Intermediate">
                   Intermediate
                 </option>
-                <option key="advance" value="advance">
+                <option key="Advance" value="Advance">
                   Advance
                 </option>
               </select>
@@ -178,13 +208,15 @@ const page = () => {
               </p>
               <label
                 htmlFor="file"
-                className="relative w-full bg-[#242628] border-[#242628] border-2 cursor-pointer py-3 px-1 rounded-md text-white truncate"
+                className="relative w-full bg-[#242628] border-[#242628] border-2 
+								cursor-pointer py-3 px-1 rounded-md text-white"
               >
-                {fileName}
+								<p className="max-w-[400px] text-ellipsis text-nowrap overflow-clip">{fileName}</p>
                 <input
                   type="file"
                   name="file"
                   id="file"
+									accept="application/pdf"
                   className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer"
                   onChange={(e) => changeFile(e)}
                 />
@@ -196,13 +228,15 @@ const page = () => {
               </p>
               <label
                 htmlFor="image"
-                className="relative w-full bg-[#242628] border-[#242628] border-2 cursor-pointer py-3 px-1 rounded-md text-white truncate"
+                className="relative w-full bg-[#242628] border-[#242628] border-2 
+								cursor-pointer py-3 px-1 rounded-md text-white"
               >
-                {imageName}
+                <p className="max-w-[400px] text-ellipsis text-nowrap overflow-clip">{imageName}</p>
                 <input
                   type="file"
                   name="image"
                   id="image"
+									accept="image/png, image/jpg, image/jpeg, image/webp"
                   className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer"
                   onChange={(e) => changeImage(e)}
                 />
@@ -211,11 +245,11 @@ const page = () => {
             <div className="md:absolute w-full flex flex-row justify-end gap-8 md:bottom-0">
               <a
                 href="/our-programs"
-                className="p-3 bg-red-200 text-red-500 font-semibold"
+                className="py-2 px-5 bg-white text-black font-semibold rounded-md border-2 border-neutral-800"
               >
                 Cancel
               </a>
-              <button type="submit" className="p-3 bg-[#b3ff00] font-semibold">
+              <button type="submit" className="py-2 px-5 bg-[#b3ff00] text-green-800 font-semibold rounded-md">
                 Save
               </button>
             </div>
