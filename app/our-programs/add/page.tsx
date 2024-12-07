@@ -113,7 +113,7 @@ const page = () => {
   return (
     <div className="relative flex flex-col justify-center items-center md:ml-[220px] p-8 z-0">
 			{isSubmit && 
-			<div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-100 opacity-70 z-[100]">
+			<div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
 				<Spinner />
 			</div>}
 			{showToast && 
@@ -139,6 +139,7 @@ const page = () => {
                 id="title"
                 placeholder="Input title"
                 value={title}
+								required
                 onChange={(e) => changeTitle(e)}
                 className="border-neutral-500 border-2 rounded-md py-3 px-1"
               />
@@ -151,6 +152,7 @@ const page = () => {
                 name="level"
                 id="level"
                 value={level}
+								required
                 onChange={(e) => changeLevel(e)}
                 className="w-full py-3 rounded-md border-neutral-500 border-2"
               >
@@ -173,6 +175,7 @@ const page = () => {
                 name="category"
                 id="category"
                 value={selectedCategory}
+								required
                 onChange={(e) => changeSelectedCategory(e)}
                 className="w-full py-3 rounded-md border-neutral-500 border-2"
               >
@@ -185,8 +188,7 @@ const page = () => {
             </div>
             <div className="flex flex-col space-y-2">
               <label className="font-semibold" htmlFor="description">
-                Description{" "}
-                <span className="text-red-500 font-semibold">*</span>
+                Description <span className="text-red-500 font-semibold">*</span>
               </label>
               <textarea
                 name="description"
@@ -196,6 +198,7 @@ const page = () => {
                 cols={18}
                 onChange={(e) => changeDesc(e)}
                 value={desc}
+								required
                 className="border-neutral-500 border-2 rounded-md py-3 px-1 placeholder:text-center placeholder:translate-y-[100%]"
               ></textarea>
             </div>
@@ -217,6 +220,7 @@ const page = () => {
                   name="file"
                   id="file"
 									accept="application/pdf"
+									required
                   className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer"
                   onChange={(e) => changeFile(e)}
                 />
@@ -237,6 +241,7 @@ const page = () => {
                   name="image"
                   id="image"
 									accept="image/png, image/jpg, image/jpeg, image/webp"
+									required
                   className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer"
                   onChange={(e) => changeImage(e)}
                 />
@@ -245,11 +250,14 @@ const page = () => {
             <div className="md:absolute w-full flex flex-row justify-end gap-8 md:bottom-0">
               <a
                 href="/our-programs"
-                className="py-2 px-5 bg-white text-black font-semibold rounded-md border-2 border-neutral-800"
-              >
+                className="py-2 px-5 bg-white text-black hover:bg-neutral-200 
+								active:ring-offset-2 active:ring-2 active:ring-neutral-800 
+								font-semibold rounded-md border-2 border-neutral-800">
                 Cancel
               </a>
-              <button type="submit" className="py-2 px-5 bg-[#b3ff00] text-green-800 font-semibold rounded-md">
+              <button type="submit" 
+							className="py-2 px-5 bg-[#b3ff00] text-green-800 hover:bg-[#9ee004] 
+							active:ring-offset-2 active:ring-2 active:ring-neutral-800 font-semibold rounded-md">
                 Save
               </button>
             </div>
