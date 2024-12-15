@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@heroicons/react": "^2.1.5",
+    "@heroicons/react": "^2.2.0",
     "cookie": "^1.0.1",
     "next": "15.0.1",
     "node-fetch": "^3.3.2",
