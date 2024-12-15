@@ -1,10 +1,26 @@
 import { serialize } from "cookie";
-import authenticateAdmin from "../../middleware/authenticateAdmin";
 
 export async function POST(request) {
   const data = await request.json();
 	const email = data.email;
 	const password = data.password;
+	
+	const authenticateAdmin = async (email, password) => {
+		const res = await fetch(`${process.env.STRAPI_URL}/admin/login`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				email, password
+			}),
+		});
+		if (res.ok) {
+			return res.json();
+		} else {
+			throw new Error("Invalid email or password");
+		}
+	}
 
 	try {
 		const strapiResponse = await authenticateAdmin(email, password);
@@ -15,7 +31,6 @@ export async function POST(request) {
 				httpOnly: true,
 				secure: process.env.NODE_ENV !== "development",
 				sameSite: "strict",
-				maxAge: 60 * 60 * 24 * 1000 * 30,
 				path: "/",
 			});
 			
