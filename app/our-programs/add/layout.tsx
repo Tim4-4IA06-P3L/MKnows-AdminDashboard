@@ -5,8 +5,6 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Spinner from "../../components/Spinner";
-import Header from "../../components/Header";
-import Sidebar from "../../components/Sidebar";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -57,8 +55,8 @@ export default function AddLayout({
   }
 
   return (
-		<main className={`${poppins.className} antialiased h-screen`}>
-			{children}
-		</main>
+    <main className={`${poppins.className} antialiased h-screen`}>
+      {children}
+    </main>
   );
 }

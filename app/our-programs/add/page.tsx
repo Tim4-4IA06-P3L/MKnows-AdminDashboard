@@ -1,25 +1,46 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import getCategories from "../../middleware/getCategories";
 import Toast from "../../components/Toast";
 import Spinner from "../../components/Spinner";
+import FileCards from "../../components/FileCards";
 
 const page = () => {
+	const router = useRouter();
+	
   const [title, setTitle] = useState("");
   const [level, setLevel] = useState("Beginner");
   const [desc, setDesc] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [fileName, setFileName] = useState("Upload PDF file");
-  const [file, setFile] = useState(null);
-  const [imageName, setImageName] = useState("Upload Thumbnail");
-  const [image, setImage] = useState(null);
+  const [categories, setCategories] = useState([]); // List of categories
+  const [selectedCategory, setSelectedCategory] = useState(""); // Selected category from the list
+	const [newCategory, setNewCategory] = useState(""); // New category
+	const [addCategory, setAddCategory] = useState(false); // Status whether to add new category or select existed category
+  const [fileName, setFileName] = useState("Upload PDF file"); // PDF Name
+  const [file, setFile] = useState(null); // Form file
+  const [imageName, setImageName] = useState("Upload Thumbnail"); // Image Name
+  const [image, setImage] = useState(null); // Form image
+	const [uploadFile, setUploadFile] = useState(true); // Status whether to upload new file or pick existed file
+	const [existedFiles, setExistedFiles] = useState(null); // List of existed files
+	const [uploadImage, setUploadImage] = useState(true); // Status whether to upload new image or pick existed image
+	const [existedImages, setExistedImages] = useState(null); // List of existed images
+	
+	// For Handling Toast
 	const [isSubmit, setIsSubmit] = useState(false);
 	const [showToast, setShowToast] = useState(false);
 	const [toastMsg, setToastMsg] = useState("");
-  const router = useRouter();
 
+	const changeFileStatus = (e) => {
+		setUploadFile(!uploadFile);
+	};
+	
+	const changeImageStatus = (e) => {
+		setUploadImage(!uploadImage);
+	};
+	
+	const changeCategoryStatus = (e) => {
+		setAddCategory(!addCategory);
+	};
+	
   const changeTitle = (e) => {
     setTitle(e.target.value);
   };
@@ -34,6 +55,10 @@ const page = () => {
 
   const changeSelectedCategory = (e) => {
     setSelectedCategory(e.target.value);
+  };
+	
+	const changeNewCategory = (e) => {
+    setNewCategory(e.target.value);
   };
 
   const changeFile = (e) => {
@@ -62,27 +87,60 @@ const page = () => {
 		setShowToast(true);
 		setTimeout(() => setShowToast(false), 5000);
 	};
-
-  const getCategoriesResponse = async () => {
+	
+	const getCategories = async () => {
+		try {
+			const response = await fetch(`${process.env.STRAPI_URL}/api/categories`);
+			const res_json = await response.json();
+			return res_json.data;
+		} catch (err) {
+			return new Error(err.message);
+		}
+	};
+	
+	const getFilesImages = async () => {
+		try {
+			const response = await fetch(`${process.env.STRAPI_URL}/api/upload/files`);
+			const res_json = await response.json();
+			const fileImageData = res_json.data;
+			setExistedFiles(fileImageData.filter((rec) => rec.name.includes("pdf") || rec.name.includes("PDF")));
+			setExistedImages(fileImageData.filter((rec) => !rec.name.includes("pdf") && !rec.name.includes("PDF")));
+		} catch (err) {
+			return new Error(err.message);
+		}
+	}
+	
+  const getCategoriesId = async () => {
     const response = await getCategories();
     setCategories(response);
-    setSelectedCategory(response[0].id);
+		if (categories.length > 0) {
+			setSelectedCategory(response[0].id);
+		} else {
+			setSelectedCategory("");
+		}
   };
 
   const handleAdd = async (e) => {
     e.preventDefault();
+		let isComplete = (title && desc && (selectedCategory || newCategory) && file && image);
     try {
-			if (title && desc && selectedCategory && file && image) {
+			if (isComplete) {
 				setIsSubmit(true);
 				const formData = new FormData();
 				formData.append("files", file);
 				formData.append("files", image);
 				formData.append("title", title);
 				formData.append("level", level);
-				formData.append("category", selectedCategory);
+				if (!addCategory) {
+					formData.append("category", selectedCategory);
+					formData.append("newCategory", 0);
+				} else {
+					formData.append("category", newCategory);
+					formData.append("newCategory", 1);
+				}
 				formData.append("desc", desc);
 
-				const response = await fetch("/api/add_program", {
+				const response = await fetch("/api/program", {
 					method: "POST",
 					body: formData,
 				});
@@ -107,19 +165,21 @@ const page = () => {
   };
 
   useEffect(() => {
-    getCategoriesResponse();
+    getCategoriesId();
+		getFilesImages();
   }, []);
 
   return (
     <div className="relative flex flex-col justify-center items-center md:ml-[220px] p-8 z-0">
 			{isSubmit && 
-			<div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
+			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
 				<Spinner />
 			</div>}
 			{showToast && 
 			<div className="fixed top-20 right-8 w-full z-[100]">
 				<Toast message={toastMsg} onClose={() => setShowToast(false)} />
 			</div>}
+			
       <h1 className="text-3xl md:text-6xl font-bold">Add a Program</h1>
 
       <section className="flex justify-center mt-8 w-full">
@@ -171,20 +231,38 @@ const page = () => {
               <label className="font-semibold" htmlFor="category">
                 Category <span className="text-red-500 font-semibold">*</span>
               </label>
-              <select
-                name="category"
-                id="category"
-                value={selectedCategory}
-								required
-                onChange={(e) => changeSelectedCategory(e)}
-                className="w-full py-3 rounded-md border-neutral-500 border-2"
-              >
-                {categories.map((choice: any) => (
-                  <option key={choice.id} value={choice.id}>
-                    {choice.Category}
-                  </option>
-                ))}
-              </select>
+							<div className="flex flex-row gap-2 w-full">
+								{!addCategory &&
+									<select
+										name="category"
+										id="category"
+										value={selectedCategory}
+										required
+										onChange={(e) => changeSelectedCategory(e)}
+										className="relative w-[80%] border-2 border-neutral-500 cursor-pointer py-3 px-1 rounded-md text-black"
+									>
+										{categories.length > 0 ? categories.map((choice: any) => (
+											<option key={choice.id} value={choice.id}>
+												{choice.Category}
+											</option>
+										)) : 
+										<option disabled>
+											No categories yet.
+										</option>}
+									</select>
+								}
+								
+								{addCategory && 
+									<input type='text' placeholder='New category' required value={newCategory} onChange={changeNewCategory}
+									className="relative w-[80%] border-neutral-500 border-2 
+									py-3 px-1 rounded-md text-black" />
+								}
+								<div className={`py-3 px-1 flex justify-center items-center cursor-pointer w-[20%] rounded-md
+								${addCategory ? "bg-[#242628] text-white" : "bg-neutral-200 text-black"}`}
+								onClick={changeCategoryStatus}>
+									{addCategory ? "New" : "Select"}
+								</div>
+							</div>
             </div>
             <div className="flex flex-col space-y-2">
               <label className="font-semibold" htmlFor="description">
@@ -209,43 +287,69 @@ const page = () => {
               <p className="font-semibold">
                 File <span className="text-red-500 font-semibold">*</span>
               </p>
-              <label
-                htmlFor="file"
-                className="relative w-full bg-[#242628] border-[#242628] border-2 
-								cursor-pointer py-3 px-1 rounded-md text-white"
-              >
-								<p className="max-w-[400px] text-ellipsis text-nowrap overflow-clip">{fileName}</p>
-                <input
-                  type="file"
-                  name="file"
-                  id="file"
-									accept="application/pdf"
-									required
-                  className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer"
-                  onChange={(e) => changeFile(e)}
-                />
-              </label>
+							<div className="flex flex-row gap-2 w-full">
+								{uploadFile &&
+									<label
+										htmlFor="file"
+										className="relative w-[80%] bg-[#242628] border-[#242628] border-2 
+										cursor-pointer py-3 px-1 rounded-md text-white"
+									>
+										<p className="max-w-[300px] text-ellipsis text-nowrap overflow-clip">{fileName}</p>
+										<input
+											type="file"
+											name="file"
+											id="file"
+											accept="application/pdf"
+											required
+											className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer"
+											onChange={(e) => changeFile(e)}
+										/>
+									</label>
+								}
+								{!uploadFile && 
+									<div className="relative w-[80%] bg-neutral-200 border-neutral-200 border-2 
+									cursor-pointer py-3 px-1 rounded-md text-black">Pick Existed File</div>
+								}
+								<div className={`py-3 px-1 flex justify-center items-center cursor-pointer w-[20%] rounded-md
+								${uploadFile ? "bg-[#242628] text-white" : "bg-neutral-200 text-black"}`}
+								onClick={changeFileStatus}>
+									{uploadFile ? "Upload" : "Pick"}
+								</div>
+							</div>
             </div>
             <div className="flex flex-col space-y-2">
               <p className="font-semibold">
                 Image <span className="text-red-500 font-semibold">*</span>
               </p>
-              <label
-                htmlFor="image"
-                className="relative w-full bg-[#242628] border-[#242628] border-2 
-								cursor-pointer py-3 px-1 rounded-md text-white"
-              >
-                <p className="max-w-[400px] text-ellipsis text-nowrap overflow-clip">{imageName}</p>
-                <input
-                  type="file"
-                  name="image"
-                  id="image"
-									accept="image/png, image/jpg, image/jpeg, image/webp"
-									required
-                  className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer"
-                  onChange={(e) => changeImage(e)}
-                />
-              </label>
+							<div className="flex flex-row gap-2 w-full">
+								{uploadImage  &&
+									<label
+										htmlFor="image"
+										className="relative w-[80%] bg-[#242628] border-[#242628] border-2 
+										cursor-pointer py-3 px-1 rounded-md text-white"
+									>
+										<p className="max-w-[300px] text-ellipsis text-nowrap overflow-clip">{imageName}</p>
+										<input
+											type="file"
+											name="image"
+											id="image"
+											accept="image/png, image/jpg, image/jpeg, image/webp"
+											required
+											className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer"
+											onChange={(e) => changeImage(e)}
+										/>
+									</label>
+								}
+								{!uploadImage && 
+									<div className="relative w-[80%] bg-neutral-200 border-neutral-200 border-2 
+									cursor-pointer py-3 px-1 rounded-md text-black">Pick Existed Image</div>
+								}
+								<div className={`py-3 px-1 flex justify-center items-center cursor-pointer w-[20%] rounded-md
+								${uploadImage ? "bg-[#242628] text-white" : "bg-neutral-200 text-black"}`}
+								onClick={changeImageStatus}>
+									{uploadImage ? "Upload" : "Pick"}
+								</div>
+							</div>
             </div>
             <div className="md:absolute w-full flex flex-row justify-end gap-8 md:bottom-0">
               <a
