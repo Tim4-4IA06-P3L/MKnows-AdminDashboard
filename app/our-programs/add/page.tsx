@@ -21,13 +21,28 @@ const page = () => {
   const [image, setImage] = useState(null); // Form image
 	const [uploadFile, setUploadFile] = useState(true); // Status whether to upload new file or pick existed file
 	const [existedFiles, setExistedFiles] = useState(null); // List of existed files
+	const [selectedExistedFile, setSelectedExistedFile] = useState(null); // Selected existed file
+	const [selectedExistedFileName, setSelectedExistedFileName] = useState("Select Existed File"); // Selected existed file name
 	const [uploadImage, setUploadImage] = useState(true); // Status whether to upload new image or pick existed image
 	const [existedImages, setExistedImages] = useState(null); // List of existed images
+	const [selectedExistedImage, setSelectedExistedImage] = useState(null); // Selected existed image
+	const [selectedExistedImageName, setSelectedExistedImageName] = useState("Select Existed Image"); // Selected existed image name
+	const [showFilesPickWindow, setShowFilesPickWindow] = useState(false);
+	const [showImagesPickWindow, setShowImagesPickWindow] = useState(false);
+	const [allLoaded, setAllLoaded] = useState(false); // If all existed data have been retrieved completely.
 	
 	// For Handling Toast
 	const [isSubmit, setIsSubmit] = useState(false);
 	const [showToast, setShowToast] = useState(false);
 	const [toastMsg, setToastMsg] = useState("");
+	
+	const handleShowFilesPickWindow = (e) => {
+		setShowFilesPickWindow(!showFilesPickWindow);
+	};
+	
+	const handleShowImagesPickWindow = (e) => {
+		setShowImagesPickWindow(!showImagesPickWindow);
+	};
 
 	const changeFileStatus = (e) => {
 		setUploadFile(!uploadFile);
@@ -83,52 +98,77 @@ const page = () => {
     }
   };
 	
+	const changeSelectedExistedFile = (e) => {
+		let existedFileAttr = JSON.parse(e.currentTarget.getAttribute('value'));
+		setSelectedExistedFile(existedFileAttr[0]);
+		setSelectedExistedFileName(existedFileAttr[1]);
+		setShowFilesPickWindow(false);
+	};
+	
+	const changeSelectedExistedImage = (e) => {
+		let existedImageAttr = JSON.parse(e.currentTarget.getAttribute('value'));
+		setSelectedExistedImage(existedImageAttr[0]);
+		setSelectedExistedImageName(existedImageAttr[1]);
+		setShowImagesPickWindow(false);
+	};
+	
 	const handleToast = () => {
 		setShowToast(true);
 		setTimeout(() => setShowToast(false), 5000);
-	};
-	
-	const getCategories = async () => {
-		try {
-			const response = await fetch(`${process.env.STRAPI_URL}/api/categories`);
-			const res_json = await response.json();
-			return res_json.data;
-		} catch (err) {
-			return new Error(err.message);
-		}
 	};
 	
 	const getFilesImages = async () => {
 		try {
 			const response = await fetch(`${process.env.STRAPI_URL}/api/upload/files`);
 			const res_json = await response.json();
-			const fileImageData = res_json.data;
-			setExistedFiles(fileImageData.filter((rec) => rec.name.includes("pdf") || rec.name.includes("PDF")));
-			setExistedImages(fileImageData.filter((rec) => !rec.name.includes("pdf") && !rec.name.includes("PDF")));
+			setExistedFiles(res_json.filter((rec) => rec.name.includes("pdf") || rec.name.includes("PDF")));
+			setExistedImages(res_json.filter((rec) => !rec.name.includes("pdf") && !rec.name.includes("PDF")));
 		} catch (err) {
 			return new Error(err.message);
 		}
 	}
 	
-  const getCategoriesId = async () => {
-    const response = await getCategories();
-    setCategories(response);
-		if (categories.length > 0) {
-			setSelectedCategory(response[0].id);
+  const getCategories = async () => {
+		const response = await fetch(`${process.env.STRAPI_URL}/api/categories?sort=Category`);
+		const res_json = await response.json();
+    const data = await res_json.data;
+    setCategories(data);
+		if (data.length > 0) {
+			setSelectedCategory(data[0].id);
 		} else {
 			setSelectedCategory("");
 		}
   };
+	
+	const getRequiredData = async () => {
+		await getCategories();
+		await getFilesImages();
+		setAllLoaded(true);
+	};
 
   const handleAdd = async (e) => {
     e.preventDefault();
-		let isComplete = (title && desc && (selectedCategory || newCategory) && file && image);
+		let isComplete = title && desc && (selectedCategory || newCategory) && (file || selectedExistedFile) && (image || selectedExistedImage);
     try {
 			if (isComplete) {
 				setIsSubmit(true);
 				const formData = new FormData();
-				formData.append("files", file);
-				formData.append("files", image);
+				if (uploadFile) {
+					formData.append("files", file);
+					formData.append("newFile", 1);
+				} else {
+					formData.append("files", selectedExistedFile);
+					formData.append("newFile", 0);
+				}
+				
+				if (uploadImage) {
+					formData.append("files", image);
+					formData.append("newImage", 1);
+				} else {
+					formData.append("files", selectedExistedImage);
+					formData.append("newImage", 0);
+				}
+				
 				formData.append("title", title);
 				formData.append("level", level);
 				if (!addCategory) {
@@ -165,19 +205,28 @@ const page = () => {
   };
 
   useEffect(() => {
-    getCategoriesId();
-		getFilesImages();
+    getRequiredData();
   }, []);
 
   return (
-    <div className="relative flex flex-col justify-center items-center md:ml-[220px] p-8 z-0">
-			{isSubmit && 
+    <div className="flex flex-col justify-center items-center md:ml-[220px] p-8 z-0">
+			{(isSubmit || !allLoaded) && 
 			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
 				<Spinner />
 			</div>}
+			
 			{showToast && 
 			<div className="fixed top-20 right-8 w-full z-[100]">
 				<Toast message={toastMsg} onClose={() => setShowToast(false)} />
+			</div>}
+			
+			{showFilesPickWindow && 
+			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
+				<FileCards fileType="pdf" files={existedFiles} onFileSelected={changeSelectedExistedFile} onClose={() => setShowFilesPickWindow(false)} />
+			</div>}
+			{showImagesPickWindow && 
+			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
+				<FileCards fileType="image" files={existedImages} onImageSelected={changeSelectedExistedImage} onClose={() => setShowImagesPickWindow(false)} />
 			</div>}
 			
       <h1 className="text-3xl md:text-6xl font-bold">Add a Program</h1>
@@ -253,7 +302,7 @@ const page = () => {
 								}
 								
 								{addCategory && 
-									<input type='text' placeholder='New category' required value={newCategory} onChange={changeNewCategory}
+									<input type='text' placeholder='New category' required={addCategory} value={newCategory} onChange={changeNewCategory}
 									className="relative w-[80%] border-neutral-500 border-2 
 									py-3 px-1 rounded-md text-black" />
 								}
@@ -294,13 +343,13 @@ const page = () => {
 										className="relative w-[80%] bg-[#242628] border-[#242628] border-2 
 										cursor-pointer py-3 px-1 rounded-md text-white"
 									>
-										<p className="max-w-[300px] text-ellipsis text-nowrap overflow-clip">{fileName}</p>
+										<p className="absolute max-w-[80%] text-ellipsis text-nowrap overflow-clip">{fileName}</p>
 										<input
 											type="file"
 											name="file"
 											id="file"
 											accept="application/pdf"
-											required
+											required={uploadFile}
 											className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer"
 											onChange={(e) => changeFile(e)}
 										/>
@@ -308,7 +357,9 @@ const page = () => {
 								}
 								{!uploadFile && 
 									<div className="relative w-[80%] bg-neutral-200 border-neutral-200 border-2 
-									cursor-pointer py-3 px-1 rounded-md text-black">Pick Existed File</div>
+									cursor-pointer py-3 px-1 rounded-md text-black" onClick={handleShowFilesPickWindow}>
+										<p className="absolute max-w-[80%] text-ellipsis text-nowrap overflow-clip">{selectedExistedFileName}</p>
+									</div>
 								}
 								<div className={`py-3 px-1 flex justify-center items-center cursor-pointer w-[20%] rounded-md
 								${uploadFile ? "bg-[#242628] text-white" : "bg-neutral-200 text-black"}`}
@@ -328,13 +379,13 @@ const page = () => {
 										className="relative w-[80%] bg-[#242628] border-[#242628] border-2 
 										cursor-pointer py-3 px-1 rounded-md text-white"
 									>
-										<p className="max-w-[300px] text-ellipsis text-nowrap overflow-clip">{imageName}</p>
+										<p className="absolute max-w-[80%] text-ellipsis text-nowrap overflow-clip">{imageName}</p>
 										<input
 											type="file"
 											name="image"
 											id="image"
 											accept="image/png, image/jpg, image/jpeg, image/webp"
-											required
+											required={uploadImage}
 											className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer"
 											onChange={(e) => changeImage(e)}
 										/>
@@ -342,7 +393,9 @@ const page = () => {
 								}
 								{!uploadImage && 
 									<div className="relative w-[80%] bg-neutral-200 border-neutral-200 border-2 
-									cursor-pointer py-3 px-1 rounded-md text-black">Pick Existed Image</div>
+									cursor-pointer py-3 px-1 rounded-md text-black" onClick={handleShowImagesPickWindow}>
+										<p className="absolute max-w-[80%] text-ellipsis text-nowrap overflow-clip">{selectedExistedImageName}</p>
+									</div>
 								}
 								<div className={`py-3 px-1 flex justify-center items-center cursor-pointer w-[20%] rounded-md
 								${uploadImage ? "bg-[#242628] text-white" : "bg-neutral-200 text-black"}`}

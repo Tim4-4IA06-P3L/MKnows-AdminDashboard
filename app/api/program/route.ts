@@ -6,28 +6,62 @@ export async function POST(request) {
 																				reqFormData.get('category'),
 																				reqFormData.get('desc')];
 	const isNewCategory = reqFormData.get("newCategory");
+	const isNewFile = reqFormData.get("newFile");
+	const isNewImage = reqFormData.get("newImage");
 	const cookie = request.headers.get('cookie') || "";
 	const auth_token = cookie.split("=")[1];
+	
+	let filesIdArr = [null, null];
 	
 	if (auth_token) {
 		if (files.length == 2) {
 			const token = process.env.API_TOKEN;
 			// POST the media
-			const filesIdArr = await Promise.all(
-				files.map(async (file) => {
-					let fileFormData = new FormData();
-					fileFormData.append("files", file);
-					let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
-						method: 'POST',
-						headers: {
-							"Authorization": `Bearer ${token}`,
-						},
-						body: fileFormData
-					});
-					let res_json = await response.json();
-					return res_json[0].id;
-				})
-			);
+			if (isNewFile == 1 && isNewImage == 1) {
+				filesIdArr = await Promise.all(
+					files.map(async (file) => {
+						let fileFormData = new FormData();
+						fileFormData.append("files", file);
+						let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+							method: 'POST',
+							headers: {
+								"Authorization": `Bearer ${token}`,
+							},
+							body: fileFormData
+						});
+						let res_json = await response.json();
+						return res_json[0].id;
+					})
+				);
+			} else if (isNewFile == 0 && isNewImage == 1) {
+				filesIdArr = [files[0]];
+				let fileFormData = new FormData();
+				fileFormData.append("files", files[1]);
+				let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+					method: 'POST',
+					headers: {
+						"Authorization": `Bearer ${token}`,
+					},
+					body: fileFormData
+				});
+				let res_json = await response.json();
+				filesIdArr.push(res_json[0].id);
+			} else if (isNewFile == 1 && isNewImage == 0) {
+				filesIdArr = [0, files[1]];
+				let fileFormData = new FormData();
+				fileFormData.append("files", files[0]);
+				let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+					method: 'POST',
+					headers: {
+						"Authorization": `Bearer ${token}`,
+					},
+					body: fileFormData
+				});
+				let res_json = await response.json();
+				filesIdArr[0] = res_json[0].id;
+			} else {
+				filesIdArr = files;
+			}
 			
 			if (isNewCategory == 1) {
 				const categoryRes = await fetch(`${process.env.STRAPI_URL}/api/categories`, {
