@@ -1,32 +1,34 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Toast from "../../components/Toast";
 import Spinner from "../../components/Spinner";
 import FileCards from "../../components/FileCards";
 
-const page = () => {
+const page = ({ params }: { params: Promise<{id: string}> }) => {
+	const { id } = React.use(params);
 	const router = useRouter();
+	let oldData = useRef(null);
 	
   const [title, setTitle] = useState("");
   const [level, setLevel] = useState("Beginner");
   const [desc, setDesc] = useState("");
-	
-  const [categories, setCategories] = useState([]); // List of categories
+  
+	const [categories, setCategories] = useState([]); // List of categories
   const [selectedCategory, setSelectedCategory] = useState(""); // Selected category from the list
 	const [newCategory, setNewCategory] = useState(""); // New category
 	const [addCategory, setAddCategory] = useState(false); // Status whether to add new category or select existed category
-	
-  const [fileName, setFileName] = useState("Upload PDF file"); // PDF Name
+  
+	const [fileName, setFileName] = useState("Upload PDF file"); // PDF Name
   const [file, setFile] = useState(null); // Form file
-	const [uploadFile, setUploadFile] = useState(true); // Status whether to upload new file or pick existed file
+	const [uploadFile, setUploadFile] = useState(false); // Status whether to upload new file or pick existed file
 	const [existedFiles, setExistedFiles] = useState(null); // List of existed files
 	const [selectedExistedFile, setSelectedExistedFile] = useState(null); // Selected existed file
 	const [selectedExistedFileName, setSelectedExistedFileName] = useState("Select Existed File"); // Selected existed file name
 	
-  const [imageName, setImageName] = useState("Upload Thumbnail"); // Image Name
+	const [imageName, setImageName] = useState("Upload Thumbnail"); // Image Name
   const [image, setImage] = useState(null); // Form image
-	const [uploadImage, setUploadImage] = useState(true); // Status whether to upload new image or pick existed image
+	const [uploadImage, setUploadImage] = useState(false); // Status whether to upload new image or pick existed image
 	const [existedImages, setExistedImages] = useState(null); // List of existed images
 	const [selectedExistedImage, setSelectedExistedImage] = useState(null); // Selected existed image
 	const [selectedExistedImageName, setSelectedExistedImageName] = useState("Select Existed Image"); // Selected existed image name
@@ -87,7 +89,7 @@ const page = () => {
       setFile(e.target.files[0]);
     } else {
 			e.target.value = null;
-      setFileName("Upload PDF file");
+			setFileName("Upload Thumbnail");
       setFile(null);
     }
   };
@@ -122,6 +124,20 @@ const page = () => {
 		setTimeout(() => setShowToast(false), 5000);
 	};
 	
+	const getProgramById = async () => {
+		const response = await fetch(`${process.env.STRAPI_URL}/api/our-programs?populate=*&filters[documentId][$eq]=${id}`);
+		const res_json = await response.json();
+		oldData.current = res_json;
+		setTitle(res_json.data[0].Title);
+		setLevel(res_json.data[0].Level);
+		setSelectedCategory(res_json.data[0].Category.id);
+		setDesc(res_json.data[0].Description);
+		setSelectedExistedFile(res_json.data[0].Document.id);
+		setSelectedExistedFileName(res_json.data[0].Document.name);
+		setSelectedExistedImage(res_json.data[0].Thumbnail.id);
+		setSelectedExistedImageName(res_json.data[0].Thumbnail.name);
+	};
+	
 	const getFilesImages = async () => {
 		try {
 			const response = await fetch(`${process.env.STRAPI_URL}/api/upload/files`);
@@ -138,26 +154,23 @@ const page = () => {
 		const res_json = await response.json();
     const data = await res_json.data;
     setCategories(data);
-		if (data.length > 0) {
-			setSelectedCategory(data[0].id);
-		} else {
-			setSelectedCategory("");
-		}
   };
 	
 	const getRequiredData = async () => {
+		await getProgramById();
 		await getCategories();
 		await getFilesImages();
 		setAllLoaded(true);
 	};
 
-  const handleAdd = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
 		let isComplete = title && desc && (selectedCategory || newCategory) && (file || selectedExistedFile) && (image || selectedExistedImage);
     try {
 			if (isComplete) {
 				setIsSubmit(true);
 				const formData = new FormData();
+				formData.append("updateId", id);
 				if (uploadFile) {
 					formData.append("files", file);
 					formData.append("newFile", 1);
@@ -186,7 +199,7 @@ const page = () => {
 				formData.append("desc", desc);
 
 				const response = await fetch("/api/program", {
-					method: "POST",
+					method: "PUT",
 					body: formData,
 				});
 		
@@ -234,13 +247,13 @@ const page = () => {
 				<FileCards fileType="image" files={existedImages} onImageSelected={changeSelectedExistedImage} onClose={() => setShowImagesPickWindow(false)} />
 			</div>}
 			
-      <h1 className="text-3xl md:text-6xl font-bold">Add a Program</h1>
-
+      <h1 className="text-3xl md:text-6xl font-bold">Edit the Program</h1>
+			
       <section className="flex justify-center mt-8 w-full">
         <form
           className="flex flex-row flex-wrap justify-around w-full"
           method="POST"
-          onSubmit={handleAdd}
+          onSubmit={handleUpdate}
         >
           <div className="flex flex-col space-y-3 basis-[90%] md:basis-[40%]">
             <div className="flex flex-col space-y-2">
@@ -295,14 +308,11 @@ const page = () => {
 										onChange={(e) => changeSelectedCategory(e)}
 										className="relative w-[80%] border-2 border-neutral-500 cursor-pointer py-3 px-1 rounded-md text-black"
 									>
-										{categories.length > 0 ? categories.map((choice: any) => (
+										{categories.map((choice: any) => (
 											<option key={choice.id} value={choice.id}>
 												{choice.Category}
 											</option>
-										)) : 
-										<option disabled>
-											No categories yet.
-										</option>}
+										))}
 									</select>
 								}
 								
@@ -345,12 +355,13 @@ const page = () => {
 								{uploadFile &&
 									<label
 										htmlFor="file"
-										className="relative w-[80%] bg-[#242628] border-[#242628] border-2 
+										className="relative w-[80%] bg-[#242628] border-[#242628] border-2 h-[52px]
 										cursor-pointer py-3 px-1 rounded-md text-white"
 									>
 										<p className="absolute max-w-[80%] text-ellipsis text-nowrap overflow-clip">{fileName}</p>
 										<input
 											type="file"
+											title="" 
 											name="file"
 											id="file"
 											accept="application/pdf"
@@ -361,7 +372,7 @@ const page = () => {
 									</label>
 								}
 								{!uploadFile && 
-									<div className="relative w-[80%] bg-neutral-200 border-neutral-200 border-2 
+									<div className="relative w-[80%] bg-neutral-200 border-neutral-200 border-2 h-[52px]
 									cursor-pointer py-3 px-1 rounded-md text-black" onClick={handleShowFilesPickWindow}>
 										<p className="absolute max-w-[80%] text-ellipsis text-nowrap overflow-clip">{selectedExistedFileName}</p>
 									</div>
@@ -381,12 +392,13 @@ const page = () => {
 								{uploadImage  &&
 									<label
 										htmlFor="image"
-										className="relative w-[80%] bg-[#242628] border-[#242628] border-2 
+										className="relative w-[80%] bg-[#242628] border-[#242628] border-2 h-[52px]
 										cursor-pointer py-3 px-1 rounded-md text-white"
 									>
 										<p className="absolute max-w-[80%] text-ellipsis text-nowrap overflow-clip">{imageName}</p>
 										<input
 											type="file"
+											title="" 
 											name="image"
 											id="image"
 											accept="image/png, image/jpg, image/jpeg, image/webp"
@@ -397,7 +409,7 @@ const page = () => {
 									</label>
 								}
 								{!uploadImage && 
-									<div className="relative w-[80%] bg-neutral-200 border-neutral-200 border-2 
+									<div className="relative w-[80%] bg-neutral-200 border-neutral-200 border-2 h-[52px]
 									cursor-pointer py-3 px-1 rounded-md text-black" onClick={handleShowImagesPickWindow}>
 										<p className="absolute max-w-[80%] text-ellipsis text-nowrap overflow-clip">{selectedExistedImageName}</p>
 									</div>

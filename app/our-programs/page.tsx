@@ -138,13 +138,12 @@ const page = () => {
                   </div>
 
                   <div className="flex flex-col flex-shrink-0 items-center justify-around w-[120px] h-full right-0 space-y-5">
-                    <button
-                      type="button"
+                    <a href={`/our-programs/${rec.documentId}`}
                       className="bg-sky-600 hover:bg-sky-700 active:ring-offset-1 
-							active:ring-neutral-100 active:ring-1 active:ring-offset-black text-white rounded-md w-[60%] py-2"
+							active:ring-neutral-100 active:ring-1 active:ring-offset-black text-white text-center rounded-md w-[60%] py-2"
                     >
                       Edit
-                    </button>
+                    </a>
                     <button
                       type="button"
                       value={`["${rec.documentId}", ${rec.Thumbnail.id}, ${rec.Document.id}]`}
