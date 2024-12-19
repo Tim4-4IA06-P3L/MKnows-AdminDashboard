@@ -35,7 +35,7 @@ export async function PUT(request) {
 		if (newUsername) {
 			await sql`UPDATE admin_users SET username = ${newUsername} WHERE document_id = ${adminID}`;
 		} else {
-			return new Response(JSON.stringify({ message: "You have to provide new username"}), {
+			return new Response(JSON.stringify({ message: "You have to provide username"}), {
 				status: 400
 			});
 		}
@@ -54,7 +54,7 @@ export async function PUT(request) {
 			});
 			if (!changePassRes.ok) {
 				return new Response(JSON.stringify({ 
-						message: "Change password failed. Maybe you provide wrong password? Make sure both current and new password are filled"
+						message: "Change password failed. Maybe you provide wrong password? Make sure current, new, and confirmation password are filled"
 					}), {
 					status: 400
 				});
