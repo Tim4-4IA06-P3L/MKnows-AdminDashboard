@@ -36,3 +36,8 @@ body {
 .animate-slide-up {
 	animation: slide-up 0.3s ease-out;
 }
+
+input[type=password]::-ms-reveal,
+input[type=password]::-ms-clear {
+	display: none;
+}
