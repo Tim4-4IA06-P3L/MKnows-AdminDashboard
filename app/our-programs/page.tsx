@@ -7,6 +7,8 @@ import { Program } from "../Types";
 const page = () => {
   const [deleteId, setDeleteId] = useState("");
   const [deleteFileId, setDeleteFileId] = useState("");
+	const [deleteFileStatus, setDeleteFileStatus] = useState(false);
+	const [deleteImageStatus, setDeleteImageStatus] = useState(false);
   const [deleteImageId, setDeleteImageId] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState<Array<Program | number>>([0]);
@@ -37,19 +39,29 @@ const page = () => {
     setDeleteImageId("");
     setShowModal(false);
   };
+	
+	const changeDeleteFileCheckbox = (e) => {
+		setDeleteFileStatus(!deleteFileStatus);
+	};
+	
+	const changeDeleteImageCheckbox = (e) => {
+		setDeleteImageStatus(!deleteImageStatus);
+	};
 
   const confirmDelete = async (e) => {
+		e.preventDefault();
     try {
+			const deleteFormData = new FormData();
+			deleteFormData.append('deleteId', deleteId);
+			if (deleteFileStatus) {
+				deleteFormData.append('deleteFileId', deleteFileId);
+			}
+			if (deleteImageStatus) {
+				deleteFormData.append('deleteImageId', deleteImageId);
+			}
       const response = await fetch("/api/program", {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: deleteId,
-          fileId: deleteFileId,
-          imageId: deleteImageId,
-        }),
+        body: deleteFormData
       });
 
       if (response.ok) {
@@ -81,7 +93,9 @@ const page = () => {
     <div className="flex flex-col justify-center items-center md:ml-[220px] p-8 gap-8">
       {showModal && (
         <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
-          <DeleteModal onCancel={confirmCancel} onDelete={confirmDelete} />
+          <DeleteModal checkboxFileStatus={deleteFileStatus} checkboxImageStatus={deleteImageStatus} 
+					changeCheckboxFile={changeDeleteFileCheckbox} changeCheckboxImage={changeDeleteImageCheckbox} 
+					onCancel={confirmCancel} onDelete={confirmDelete} />
         </div>
       )}
       <section className="flex justify-between items-center w-full">
@@ -113,9 +127,9 @@ const page = () => {
                 >
                   <div className="relative h-full basis-[20%] flex-shrink-0">
                     <Image
-                      src={`${process.env.STRAPI_URL}${rec.Thumbnail.formats.small.url}`}
-                      width={rec.Thumbnail.formats.small.width}
-                      height={rec.Thumbnail.formats.small.height}
+                      src={`${process.env.STRAPI_URL}${rec.Thumbnail.url}`}
+                      width={rec.Thumbnail.width}
+                      height={rec.Thumbnail.height}
                       style={{
                         objectFit: "contain",
                         objectPosition: "center",
@@ -146,7 +160,7 @@ const page = () => {
                     </a>
                     <button
                       type="button"
-                      value={`["${rec.documentId}", ${rec.Thumbnail.id}, ${rec.Document.id}]`}
+                      value={`["${rec.documentId}", ${rec.Document.id}, ${rec.Thumbnail.id}]`}
                       onClick={onDelete}
                       className="bg-red-600 hover:bg-red-700 active:ring-offset-1 
 							active:ring-neutral-100 active:ring-1 active:ring-offset-black text-white rounded-md w-[60%] py-2"

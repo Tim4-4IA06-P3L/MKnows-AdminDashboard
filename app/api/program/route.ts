@@ -248,59 +248,75 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
-	const reqJson = await request.json();
-	const deleteId = reqJson.id;
-	const fileDeleteId = reqJson.fileId;
-	const imageDeleteId = reqJson.imageId;
+	const reqFormData = await request.formData();
+	const deleteId = reqFormData.get('deleteId');
+	const deleteFileId = reqFormData.get('deleteFileId') || '';
+	const deleteImageId = reqFormData.get('deleteImageId') || '';
 	const cookies = parse(request.headers.get('cookie') || '');
   const auth_token = cookies.AdminJWT;
 	
+	const deleteFile = async () => {
+		const deleteFileRes = await fetch(`${process.env.STRAPI_URL}/api/upload/files/${deleteFileId}`, {
+			method: 'DELETE',
+			headers: {
+				"Authorization": `Bearer ${process.env.API_TOKEN}`
+			}
+		});
+		return deleteFileRes;
+	};
+	
+	const deleteImage = async () => {
+		const deleteImageRes = await fetch(`${process.env.STRAPI_URL}/api/upload/files/${deleteImageId}`, {
+			method: 'DELETE',
+			headers: {
+				"Authorization": `Bearer ${process.env.API_TOKEN}`
+			}
+		});
+		return deleteImageRes;
+	};
+	
+	const deleteProgram = async () => {
+		const deleteProgramRes = await fetch(`${process.env.STRAPI_URL}/api/our-programs/${deleteId}`, {
+			method: 'DELETE',
+			headers: {
+				"Authorization": `Bearer ${process.env.API_TOKEN}`
+			}
+		});
+		return deleteProgramRes;
+	};
+	
 	if (auth_token) {
 		try {
-			const deleteProgram = async () => {
-				await fetch(`${process.env.STRAPI_URL}/api/our-programs/${deleteId}`, {
-					method: 'DELETE',
-					headers: {
-						"Authorization": `Bearer ${process.env.API_TOKEN}`
-					}
-				});
-			};
-			
-			const deleteFile = async () => {
-				await fetch(`${process.env.STRAPI_URL}/api/upload/files/${fileDeleteId}`, {
-					method: 'DELETE',
-					headers: {
-						"Authorization": `Bearer ${process.env.API_TOKEN}`
-					}
-				});
-			};
-			
-			const deleteImage = async () => {
-				await fetch(`${process.env.STRAPI_URL}/api/upload/files/${imageDeleteId}`, {
-					method: 'DELETE',
-					headers: {
-						"Authorization": `Bearer ${process.env.API_TOKEN}`
-					}
-				});
-			};
-			
 			const deleteProgramRes = await deleteProgram();
-			const deleteFileRes = await deleteFile();
-			const deleteImageRes = await deleteImage();
-			
-			const response = await Promise.all([deleteProgramRes, deleteFileRes, deleteImageRes]);
-			console.log(response);
-			if (response.ok) {
-				return new Response(JSON.stringify({ "message": "Delete is successful" }), {
-					status: 200
-				});
-			} else {
-				return new Response(JSON.stringify({ "message": "Delete is failed" }), {
+			if (!deleteProgramRes.ok) {
+				return new Response(JSON.stringify({ "message": "Delete program failed. File and image are both remained." }), {
 					status: 400
 				});
 			}
+			
+			if (deleteFileId){
+				const deleteFileRes = await deleteFile();
+				if (!deleteFileRes.ok) {
+					return new Response(JSON.stringify({ "message": "Delete file failed but program has been deleted." }), {
+						status: 400
+					});
+				}
+			}
+			
+			if (deleteImageId) {
+				const deleteImageRes = await deleteImage();
+				if (!deleteImageRes.ok) {
+					return new Response(JSON.stringify({ "message": "Delete image failed but both program and the file has been deleted." }), {
+						status: 400
+					});
+				}
+			}
+			return new Response(JSON.stringify({ "message": "Delete success" }), {
+				status: 200
+			});
+			
 		} catch (err) {
-			return new Response(JSON.stringify({ "message": "Request is failed. Something's error happened" }), {
+			return new Response(JSON.stringify({ "message": "Request failed. Something's error happened" }), {
 				status: 400
 			});
 		}
