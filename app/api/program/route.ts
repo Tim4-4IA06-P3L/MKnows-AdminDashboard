@@ -1,3 +1,5 @@
+import { parse } from "cookie";
+
 export async function POST(request) {
 	const reqFormData = await request.formData();
 	const files = reqFormData.getAll("files");
@@ -8,8 +10,8 @@ export async function POST(request) {
 	const isNewCategory = reqFormData.get("newCategory");
 	const isNewFile = reqFormData.get("newFile");
 	const isNewImage = reqFormData.get("newImage");
-	const cookie = request.headers.get('cookie') || "";
-	const auth_token = cookie.split("=")[1];
+	const cookies = parse(request.headers.get('cookie') || '');
+  const auth_token = cookies.AdminJWT;
 	
 	let filesIdArr = [null, null];
 	
@@ -112,7 +114,7 @@ export async function POST(request) {
 		}
 		
 	} else {
-		return new Response(JSON.stringify({ message: "Request failed"}), {
+		return new Response(JSON.stringify({ message: "Unauthorized"}), {
 			status: 400,
 			headers: {
 				"Content-Type": "application/json",
@@ -132,8 +134,8 @@ export async function PUT(request) {
 	const isNewCategory = reqFormData.get("newCategory");
 	const isNewFile = reqFormData.get("newFile");
 	const isNewImage = reqFormData.get("newImage");
-	const cookie = request.headers.get('cookie') || "";
-	const auth_token = cookie.split("=")[1];
+	const cookies = parse(request.headers.get('cookie') || '');
+  const auth_token = cookies.AdminJWT;
 	
 	let filesIdArr = [null, null];
 	
@@ -236,7 +238,7 @@ export async function PUT(request) {
 		}
 		
 	} else {
-		return new Response(JSON.stringify({ message: "Request failed"}), {
+		return new Response(JSON.stringify({ message: "Unauthorized"}), {
 			status: 400,
 			headers: {
 				"Content-Type": "application/json",
@@ -250,51 +252,60 @@ export async function DELETE(request) {
 	const deleteId = reqJson.id;
 	const fileDeleteId = reqJson.fileId;
 	const imageDeleteId = reqJson.imageId;
-	try {
-		const deleteProgram = async () => {
-			await fetch(`${process.env.STRAPI_URL}/api/our-programs/${deleteId}`, {
-				method: 'DELETE',
-				headers: {
-					"Authorization": `Bearer ${process.env.API_TOKEN}`
-				}
-			});
-		};
-		
-		const deleteFile = async () => {
-			await fetch(`${process.env.STRAPI_URL}/api/upload/files/${fileDeleteId}`, {
-				method: 'DELETE',
-				headers: {
-					"Authorization": `Bearer ${process.env.API_TOKEN}`
-				}
-			});
-		};
-		
-		const deleteImage = async () => {
-			await fetch(`${process.env.STRAPI_URL}/api/upload/files/${imageDeleteId}`, {
-				method: 'DELETE',
-				headers: {
-					"Authorization": `Bearer ${process.env.API_TOKEN}`
-				}
-			});
-		};
-		
-		const deleteProgramRes = await deleteProgram();
-		const deleteFileRes = await deleteFile();
-		const deleteImageRes = await deleteImage();
-		
-		const response = await Promise.all([deleteProgramRes, deleteFileRes, deleteImageRes]);
-		console.log(response);
-		if (response) {
-			return new Response(JSON.stringify({ "message": "Delete is successful" }), {
-				status: 200
-			});
-		} else {
-			return new Response(JSON.stringify({ "message": "Delete is failed" }), {
+	const cookies = parse(request.headers.get('cookie') || '');
+  const auth_token = cookies.AdminJWT;
+	
+	if (auth_token) {
+		try {
+			const deleteProgram = async () => {
+				await fetch(`${process.env.STRAPI_URL}/api/our-programs/${deleteId}`, {
+					method: 'DELETE',
+					headers: {
+						"Authorization": `Bearer ${process.env.API_TOKEN}`
+					}
+				});
+			};
+			
+			const deleteFile = async () => {
+				await fetch(`${process.env.STRAPI_URL}/api/upload/files/${fileDeleteId}`, {
+					method: 'DELETE',
+					headers: {
+						"Authorization": `Bearer ${process.env.API_TOKEN}`
+					}
+				});
+			};
+			
+			const deleteImage = async () => {
+				await fetch(`${process.env.STRAPI_URL}/api/upload/files/${imageDeleteId}`, {
+					method: 'DELETE',
+					headers: {
+						"Authorization": `Bearer ${process.env.API_TOKEN}`
+					}
+				});
+			};
+			
+			const deleteProgramRes = await deleteProgram();
+			const deleteFileRes = await deleteFile();
+			const deleteImageRes = await deleteImage();
+			
+			const response = await Promise.all([deleteProgramRes, deleteFileRes, deleteImageRes]);
+			console.log(response);
+			if (response.ok) {
+				return new Response(JSON.stringify({ "message": "Delete is successful" }), {
+					status: 200
+				});
+			} else {
+				return new Response(JSON.stringify({ "message": "Delete is failed" }), {
+					status: 400
+				});
+			}
+		} catch (err) {
+			return new Response(JSON.stringify({ "message": "Request is failed. Something's error happened" }), {
 				status: 400
 			});
 		}
-	} catch (err) {
-		return new Response(JSON.stringify({ "message": "Request is failed" }), {
+	} else {
+		return new Response(JSON.stringify({ "message": "Unauthorized" }), {
 			status: 400
 		});
 	}

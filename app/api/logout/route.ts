@@ -1,8 +1,8 @@
-import { serialize } from "cookie";
+import { serialize, parse } from "cookie";
 
 export async function GET(request) {
-  const cookiesHeader = request.headers.get('cookie') || '';
-  const token = cookiesHeader.split("=")[1];
+  const cookies = parse(request.headers.get('cookie') || '');
+  const token = cookies.AdminJWT;
 
   if (!token) {
     return new Response(JSON.stringify({ message: "Already logged out"}), {
@@ -19,12 +19,20 @@ export async function GET(request) {
       maxAge: -1,
       path: "/",
     });
+		
+		const loggedOutID = serialize("AdminID", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+      maxAge: -1,
+      path: "/",
+    });
 
     return new Response(JSON.stringify({ message: "Log out successful"}), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Set-Cookie": loggedOutToken,
+        "Set-Cookie": [loggedOutToken, loggedOutID],
       }
     });
   }

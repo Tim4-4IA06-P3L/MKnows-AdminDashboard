@@ -1,6 +1,8 @@
+import { serialize, parse } from "cookie";
+
 export async function GET(request) {
-  const cookieHeader = request.headers.get('cookie') || "";
-  const token = cookieHeader.split("=")[1];
+  const cookies = parse(request.headers.get('cookie') || '');
+  const token = cookies.AdminJWT;
 
   if (token) {
     return new Response(JSON.stringify({ message : "Authorized Admin"}), {

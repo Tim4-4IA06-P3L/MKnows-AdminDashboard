@@ -25,9 +25,17 @@ export async function POST(request) {
 	try {
 		const strapiResponse = await authenticateAdmin(email, password);
 		const token = strapiResponse.data.token;
+		const adminId = strapiResponse.data.user.documentId;
 
 		if (token) {
 			const serialized_token = serialize("AdminJWT", token, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV !== "development",
+				sameSite: "strict",
+				path: "/",
+			});
+			
+			const serialized_id = serialize("AdminID", adminId, {
 				httpOnly: true,
 				secure: process.env.NODE_ENV !== "development",
 				sameSite: "strict",
@@ -38,7 +46,7 @@ export async function POST(request) {
 				status: 200,
 				headers: {
 					"Content-Type": "application/json",
-					"Set-Cookie": serialized_token,
+					"Set-Cookie": [serialized_token, serialized_id]
 				},
 			});
 		}
