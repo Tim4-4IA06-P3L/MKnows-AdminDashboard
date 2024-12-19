@@ -7,7 +7,7 @@ import Toast from "./components/Toast";
 import Spinner from "./components/Spinner";
 
 export default function Home() {
-
+	
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, togglePassword] = useState(false);
@@ -110,6 +110,7 @@ export default function Home() {
               name="email"
               id="email"
               value={email}
+							required
               onChange={(e) => handleEmailChange(e)}
               placeholder="Enter your email"
               className="bg-neutral-100 rounded-md mb-3 h-10 p-4 w-full border-2"
@@ -125,6 +126,7 @@ export default function Home() {
                 name="password"
                 id="password"
                 value={password}
+								required
                 onChange={(e) => handlePasswordChange(e)}
                 placeholder="Enter your password"
                 className="bg-neutral-100 rounded-md h-full p-4 w-full mb-4 border-2"
