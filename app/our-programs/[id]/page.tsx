@@ -139,11 +139,12 @@ const page = ({ params }: { params: Promise<{id: string}> }) => {
 	};
 	
 	const getFilesImages = async () => {
+		const pattern = /Avatar-[\w]*.[A-Za-z]*/;
 		try {
 			const response = await fetch(`${process.env.STRAPI_URL}/api/upload/files`);
 			const res_json = await response.json();
 			setExistedFiles(res_json.filter((rec) => rec.name.includes("pdf") || rec.name.includes("PDF")));
-			setExistedImages(res_json.filter((rec) => !rec.name.includes("pdf") && !rec.name.includes("PDF")));
+			setExistedImages(res_json.filter((rec) => !rec.name.includes("pdf") && !rec.name.includes("PDF") && !pattern.test(rec.name)));
 		} catch (err) {
 			return new Error(err.message);
 		}
@@ -165,7 +166,9 @@ const page = ({ params }: { params: Promise<{id: string}> }) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-		let isComplete = title && desc && (selectedCategory || newCategory) && (file || selectedExistedFile) && (image || selectedExistedImage);
+		let isComplete = title && desc && (selectedCategory || newCategory) && 
+		((file && uploadFile) || (selectedExistedFile && !uploadFile)) && 
+		((image && uploadImage) || (selectedExistedImage && !uploadImage));
     try {
 			if (isComplete) {
 				setIsSubmit(true);
