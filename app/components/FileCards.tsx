@@ -38,7 +38,7 @@ const FileCards = ({ fileType, files, onFileSelected, onImageSelected, onClose }
 								</a>
 							</div>
 							
-							<div className="flex justify-center items-center w-full border-2 border-neutral-500 rounded-b-md mb-1">
+							<div className="max-w-[180px] flex justify-center items-center w-full border-2 border-neutral-500 rounded-b-md mb-1">
 								<p className="max-w-[80%] text-ellipsis text-nowrap overflow-clip">{file.name}</p>
 							</div>
 							
