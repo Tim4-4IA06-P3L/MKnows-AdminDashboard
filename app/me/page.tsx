@@ -11,6 +11,7 @@ const page = () => {
 	const AdminID = useRef("");
 	const [newUsername, setNewUsername] = useState("");
 	const [newPassword, setNewPassword] = useState("");
+	const [confirmNewPassword, setConfirmNewPassword] = useState("");
 	const [oldPassword, setOldPassword] = useState("");
 	const [newPhoto, setNewPhoto] = useState(null);
 	const [newPhotoExt, setNewPhotoExt] = useState("");
@@ -18,10 +19,13 @@ const page = () => {
 	const oldPhotoURL = useRef("/Avatar101.jpg");
 	const [newPhotoURL, setNewPhotoURL] = useState(oldPhotoURL.current);
 	const [hidePassword, setHidePassword] = useState(true);
+	const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
 	const [hideOldPassword, setHideOldPassword] = useState(true);
 	const [showModal, setShowModal] = useState(false);
 	const [allLoaded, setAllLoaded] = useState(false); // If all existed data have been retrieved completely.
 	const [isSubmit, setIsSubmit] = useState(false);
+	const [toastMsg, setToastMsg] = useState("");
+	const [showToast, setShowToast] = useState(false);
 	
 	const changeUsername = (e) => {
 		setNewUsername(e.target.value);
@@ -33,6 +37,10 @@ const page = () => {
 	
 	const changePassword = (e) => {
 		setNewPassword(e.target.value);
+	};
+	
+	const changeConfirmPassword = (e) => {
+		setConfirmNewPassword(e.target.value);
 	};
 	
 	const changePhoto = (e) => {
@@ -91,6 +99,10 @@ const page = () => {
 		setHidePassword(!hidePassword);
 	};
 	
+	const toggleHideConfirmPassword = () => {
+		setHideConfirmPassword(!hideConfirmPassword);
+	};
+	
 	const toggleShowModal = () => {
 		setShowModal(!showModal);
 	};
@@ -126,17 +138,38 @@ const page = () => {
 			const removeRes = await fetch('/api/avatar', {
 				method: 'DELETE'
 			});
+			
+			if (!removeRes.ok) {
+				setIsSubmit(false);
+				setToastMsg("Failed updating photo");
+				setShowToast(true);
+				return;
+			}
 		}
 		
 		reqFormData.append('newUsername', newUsername);
-		if (newPassword && oldPassword) {
-			reqFormData.append('oldPassword', oldPassword);
-			reqFormData.append('newPassword', newPassword);
+		if (newPassword && confirmNewPassword && oldPassword) {
+			if ((newPassword == confirmNewPassword) && oldPassword) {
+				reqFormData.append('oldPassword', oldPassword);
+				reqFormData.append('newPassword', newPassword);
+			} else {
+				setIsSubmit(false);
+				setToastMsg("Different password confirmation");
+				setShowToast(true);
+				return;
+			}
 		}
 		const response = await fetch('/api/me', {
 			method: 'PUT',
 			body: reqFormData
 		});
+		
+		if (!response.ok) {
+			setIsSubmit(false);
+			setToastMsg("Wrong password");
+			setShowToast(true);
+			return;
+		}
 		
 		router.push("/dashboard");
 	};
@@ -155,6 +188,11 @@ const page = () => {
 			{showModal && 
 			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
 				<ProfilePhotoModal avatarURL={newPhotoURL} onClose={toggleShowModal} onUpload={changePhoto} onRemove={changeRemovePhoto} />
+			</div>}
+			
+			{showToast && 
+			<div className="fixed top-20 right-8 w-full z-[100]">
+				<Toast message={toastMsg} onClose={() => setShowToast(false)} />
 			</div>}
 			
       <div className="flex flex-col justify-start relative w-full sm:w-[60%] gap-8">
@@ -198,16 +236,33 @@ const page = () => {
 						</button>
 					</div>
 					
-					<label htmlFor="password" className="font-bold">New Password</label>
-					<div className="relative mb-8">
-						<input type={hidePassword ? "password" : "text"} id="password" name="password" value={newPassword} 
-							onChange={changePassword} autoComplete="one-time-code"
-							className="w-full rounded-md border-2 border-neutral-500 py-5 px-2"
-						/>
-						<button onClick={toggleHidePassword} type="button"
-							className="flex justify-center items-center absolute right-3 w-5 h-5 top-6">
-							{hidePassword ? <EyeIcon /> : <EyeSlashIcon />}
-						</button>
+					<div className="flex flex-row gap-2 w-[100%] items-end">
+						<div className="basis-[50%]">
+							<label htmlFor="password" className="font-bold">New Password</label>
+							<div className="relative mb-8">
+								<input type={hidePassword ? "password" : "text"} id="password" name="password" value={newPassword} 
+									onChange={changePassword} autoComplete="one-time-code"
+									className="w-full rounded-md border-2 border-neutral-500 py-5 px-2"
+								/>
+								<button onClick={toggleHidePassword} type="button"
+									className="flex justify-center items-center absolute right-3 w-5 h-5 top-6">
+									{hidePassword ? <EyeIcon /> : <EyeSlashIcon />}
+								</button>
+							</div>
+						</div>
+						<div className="basis-[50%]">
+							<label htmlFor="confirmPassword" className="font-bold">Confirm New Password</label>
+							<div className="relative mb-8">
+								<input type={hidePassword ? "password" : "text"} id="confirmPassword" name="confirmPassword" value={confirmNewPassword} 
+									onChange={changeConfirmPassword} autoComplete="one-time-code"
+									className="w-full rounded-md border-2 border-neutral-500 py-5 px-2"
+								/>
+								<button onClick={toggleHideConfirmPassword} type="button"
+									className="flex justify-center items-center absolute right-3 w-5 h-5 top-6">
+									{hideConfirmPassword ? <EyeIcon /> : <EyeSlashIcon />}
+								</button>
+							</div>
+						</div>
 					</div>
 					
 					<div className="relative flex flex-row gap-3 self-end">
