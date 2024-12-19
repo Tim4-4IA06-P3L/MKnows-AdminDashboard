@@ -3,8 +3,8 @@ import Image from "next/image";
 
 const FileCards = ({ fileType, files, onFileSelected, onImageSelected, onClose }) => {
 	return (
-		<div className="max-w-[90%] bg-white rounded-md shadow-lg">
-			<div className="w-full h-[58px] rounded-t-md bg-neutral-100 flex flex-row justify-between items-center">
+		<div className="relative max-w-[90%] max-h-[85%] overflow-y-auto bg-white rounded-md shadow-lg">
+			<div className="w-full h-[58px] rounded-t-md bg-neutral-100 flex flex-row justify-between items-center sticky top-0 z-[100]">
 				{fileType == "pdf" ? <p className="ml-4 font-bold">Select Existed File</p> : <p className="ml-4 font-bold">Select Existed Image</p>}
 				<div className="mr-4 cursor-pointer" onClick={onClose}>
 					<svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="size-8">
@@ -16,11 +16,11 @@ const FileCards = ({ fileType, files, onFileSelected, onImageSelected, onClose }
 				<div className="flex justify-center flex-wrap gap-3 md:gap-5 max-h-full overflow-auto p-5">
 					{files.map((file) => (
 						<div className="basis-[18%] flex flex-col justify-center items-center" key={file.id}>
-							<div className="relative w-[180px] h-[100px] flex justify-center">
+							<div className="relative w-[180px] h-[100px] flex justify-center z-0">
 								<Image 
-									src={`${process.env.STRAPI_URL}${file.formats.small.url}`}
-									width={file.formats.small.width}
-									height={file.formats.small.height}
+									src={`${process.env.STRAPI_URL}${file.url}`}
+									width={file.width}
+									height={file.height}
 									style={{
 										objectFit: "cover",
 										objectPosition: "center",
@@ -30,7 +30,7 @@ const FileCards = ({ fileType, files, onFileSelected, onImageSelected, onClose }
 									alt="Thumbnail"
 								/>
 								<a href={`${process.env.STRAPI_URL}${file.url}`} target="_blank"
-									className="absolute w-[180px] h-[100px] text-white 
+									className="absolute w-[180px] h-[100px] text-white
 									flex justify-center items-center 
 									transition-all linear duration-300 
 									opacity-0 hover:bg-neutral-800/[0.8] hover:opacity-100 z-[100]">
@@ -54,7 +54,7 @@ const FileCards = ({ fileType, files, onFileSelected, onImageSelected, onClose }
 				<div className="flex flex-col justify-start gap-2 md:gap-5 max-h-full w-full overflow-x-hidden overflow-y-auto p-5">
 					{files.map((file) => (
 						<div className="flex flex-row items-center gap-1 w-full" key={file.id}>
-							<div className="relative w-[80px] h-[100px] flex justify-center">
+							<div className="relative w-[80px] h-[100px] flex justify-center z-0">
 								<div className="flex justify-center items-center w-[80px] h-[100px]">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
