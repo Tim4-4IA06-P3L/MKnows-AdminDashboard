@@ -33,15 +33,9 @@ const Sidebar = ({ logOut }) => {
 				>
 					<a href="/dashboard" className="flex flex-row">
 						<div className="h-6 w-6 mr-3">
-							<svg
-								viewBox="0 0 32 31"
-								fill="currentColor"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									d="M28.2734 9.87178C27.9411 9.19348 27.4021 8.6264 26.7268 8.24449L18.1001 3.15922C17.4674 2.78543 16.7378 2.5874 15.9934 2.5874C15.2491 2.5874 14.5195 2.78543 13.8868 3.15922L5.2601 8.24449C4.60615 8.64161 4.08733 9.21138 3.76677 9.88449C3.43377 10.5576 3.32221 11.311 3.44677 12.0457L5.68677 24.7589C5.83041 25.6454 6.30366 26.4532 7.0201 27.0346C7.73086 27.6022 8.62635 27.9168 9.55344 27.9245H22.3801C23.3255 27.9286 24.2419 27.6134 24.9668 27.0346C25.687 26.4561 26.1611 25.647 26.3001 24.7589L28.5401 12.0457C28.6759 11.3118 28.5832 10.556 28.2734 9.87178ZM20.4601 22.2036H11.5401C11.1865 22.2036 10.8473 22.0696 10.5973 21.8312C10.3472 21.5928 10.2068 21.2694 10.2068 20.9322C10.2068 20.5951 10.3472 20.2717 10.5973 20.0333C10.8473 19.7949 11.1865 19.6609 11.5401 19.6609H20.4601C20.8137 19.6609 21.1529 19.7949 21.4029 20.0333C21.653 20.2717 21.7934 20.5951 21.7934 20.9322C21.7934 21.2694 21.653 21.5928 21.4029 21.8312C21.1529 22.0696 20.8137 22.2036 20.4601 22.2036Z"
-									fill="currentColor"
-								/>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+									<path d="M 12 2 A 1 1 0 0 0 11.289062 2.296875 L 1.203125 11.097656 A 0.5 0.5 0 0 0 1 11.5 A 0.5 0.5 0 0 0 1.5 12 L 4 12 L 4 20 C 4 20.552 4.448 21 5 21 L 9 21 C 9.552 21 10 20.552 10 20 L 10 14 L 14 14 L 14 20 C 14 20.552 14.448 21 15 21 L 19 21 C 19.552 21 20 20.552 20 20 L 20 12 L 22.5 12 A 0.5 0.5 0 0 0 23 11.5 A 0.5 0.5 0 0 0 22.796875 11.097656 L 12.716797 2.3027344 A 1 1 0 0 0 12.710938 2.296875 A 1 1 0 0 0 12 2 z" 
+									fill="currentColor"></path>
 							</svg>
 						</div>
 						<p>Dashboard</p>
@@ -64,6 +58,40 @@ const Sidebar = ({ logOut }) => {
 							</svg>
 						</div>
 						<p>Our Programs</p>
+					</a>
+				</li>
+				<li
+					className="text-white font-semibold cursor-pointer w-max hover:text-green-500"
+				>
+					<a href="/categories" className="flex flex-row">
+						<div className="h-6 w-6 mr-3">
+							<svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+								<g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+								<g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+								<g id="SVGRepo_iconCarrier">
+									<path d="M10 3H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zm10 10h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1zM17 3c-2.206 0-4 1.794-4 4s1.794 4 4 4 4-1.794 4-4-1.794-4-4-4zM7 13c-2.206 0-4 1.794-4 4s1.794 4 4 4 4-1.794 4-4-1.794-4-4-4z" 
+									fill="currentColor"></path>
+								</g>
+							</svg>
+						</div>
+						<p>Categories</p>
+					</a>
+				</li>
+				<li
+					className="text-white font-semibold cursor-pointer w-max hover:text-green-500"
+				>
+					<a href="/uploads" className="flex flex-row">
+						<div className="h-6 w-6 mr-3">
+							<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+								<g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+								<g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+								<g id="SVGRepo_iconCarrier">
+									<rect x="0" fill="none" width="20" height="20"></rect>
+									<g><path d="M12 2l4 4v12H4V2h8zm0 4h3l-3-3v3z" fill="currentColor"></path></g>
+								</g>
+							</svg>
+						</div>
+						<p>Uploads</p>
 					</a>
 				</li>
         <li
