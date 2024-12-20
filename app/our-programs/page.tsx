@@ -122,7 +122,7 @@ const page = () => {
             (rec) =>
               typeof rec != "number" && (
                 <div
-                  className="relative flex flex-row justify-start items-center w-full h-max bg-[#242628] p-3 pr-0 space-x-3"
+                  className="relative flex flex-row justify-start items-center w-full h-max bg-[#242628] p-3 pr-0 space-x-3 rounded-md"
                   key={rec.documentId}
                 >
                   <div className="relative h-full basis-[20%] flex-shrink-0">
