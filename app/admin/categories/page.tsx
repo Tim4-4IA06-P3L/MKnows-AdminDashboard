@@ -1,7 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import DeleteCategoryModal from "../../components/DeleteCategoryModal";
+import DeleteModal from "../../components/DeleteModal";
 import EditCategoryModal from "../../components/EditCategoryModal";
+import ConfirmBtn from "../../components/ConfirmBtn";
+import EditBtn from "../../components/EditBtn";
+import DeleteBtn from "../../components/DeleteBtn";
+import NoContentBox from "../../components/NoContentBox";
+import Toast from "../../components/Toast";
 
 const page = () => {
 	const [categories, setCategories] = useState([0]);
@@ -11,6 +16,8 @@ const page = () => {
 	const [showEditModal, setShowEditModal] = useState(false);
 	const [deleteId, setDeleteId] = useState("");
 	const [editId, setEditId] = useState("");
+	const [toastMsg, setToastMsg] = useState("");
+	const [showToast, setShowToast] = useState(false);
 	
 	const changeNewCategory = (e) => {
 		setNewCategory(e.target.value);
@@ -18,6 +25,11 @@ const page = () => {
 	
 	const changeEditCategory = (e) => {
 		setEditCategory(e.target.value);
+	};
+	
+	const handleToast = () => {
+		setShowToast(true);
+		setTimeout(() => setShowToast(false), 5000);
 	};
 	
 	const onCancelModal = () => {
@@ -51,6 +63,8 @@ const page = () => {
 		setCategories(categories.filter((rec) => rec.documentId != deleteId));
 		setDeleteId("");
 		setShowDeleteModal(false);
+		setToastMsg("Delete successful");
+		handleToast();
 	};
 	
 	const onEditModal = async (e) => {
@@ -69,6 +83,8 @@ const page = () => {
 		setEditId("");
 		setEditCategory("");
 		setShowEditModal(false);
+		setToastMsg("Edit successful");
+		handleToast();
 	};
 	
 	const addCategory = async (e) => {
@@ -86,6 +102,8 @@ const page = () => {
 		});
 		setNewCategory("");
 		getCategories();
+		setToastMsg("Add successful");
+		handleToast();
 	};
 	
 	const getCategories = async () => {
@@ -99,74 +117,59 @@ const page = () => {
 	}, []);
 	
   return (
-    <div className="flex flex-col justify-center items-center md:ml-[220px] p-8">
+    <>
 			{showDeleteModal && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
-          <DeleteCategoryModal onCancel={onCancelModal} onDelete={onDeleteModal} />
-        </div>
+        <DeleteModal messageType="Delete Category?" modalType="category" 
+					onCancel={onCancelModal} onDelete={onDeleteModal}
+				/>
       )}
 			
 			{showEditModal && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
-          <EditCategoryModal value={editCategory} onChange={changeEditCategory} onCancel={onCancelModal} onEdit={onEditModal} />
-        </div>
+				<EditCategoryModal value={editCategory} onChange={changeEditCategory} onCancel={onCancelModal} onEdit={onEditModal} />
       )}
 			
-      <h1 className="text-3xl md:text-6xl font-bold">Categories</h1>
-			{categories.length == 0 &&
-				<section className="flex justify-center mt-8">
-          <div className="p-8 bg-neutral-200 rounded-lg">
-            <p className="font-semibold">You haven't had any categories yet.</p>
-          </div>
-        </section>
+			{showToast &&
+				<Toast message={toastMsg} error={false} />
 			}
 			
-			{(categories[0] != 0 && categories.length > 0) &&
-				categories.map((rec) => (
-					<div className="w-[95%] sm:w-[90%] bg-neutral-100 rounded-md p-5 m-5 gap-3 flex justify-between items-center" key={rec.documentId}>
-						<div>
-							<p className="font-semibold">{rec.Category}</p>
-							{rec.programs.length > 0 && 
-								<p className="text-sm text-red-500">
-									This category has {rec.programs.length} linked program(s).
-								</p>
-							}
+      <h1 className="text-3xl md:text-6xl font-bold">Categories</h1>
+			
+			<div className="w-full flex flex-col justify-center items-center">
+				{categories.length == 0 &&
+					<NoContentBox message="You haven't had any categories yet." />
+				}
+				
+				{(categories[0] != 0 && categories.length > 0) &&
+					categories.map((rec) => (
+						<div className="w-[95%] sm:w-[90%] bg-neutral-100 rounded-md p-5 m-5 gap-3 flex justify-between items-center" key={rec.documentId}>
+							<div>
+								<p className="font-semibold">{rec.Category}</p>
+								{
+									rec.programs.length > 0 && 
+									<p className="text-sm text-red-500">
+										This category has {rec.programs.length} linked program(s).
+									</p>
+								}
+							</div>
+							<div className="flex justify-between gap-5">
+								<EditBtn btnType="button" value={`${rec.documentId}`} onClick={onEdit} width="w-max" padding="p-2" />
+								{!(rec.programs.length > 0) &&
+									<DeleteBtn btnType="button" value={`${rec.documentId}`} onClick={onDelete} width="w-max" padding="p-2" />
+								}
+							</div>
 						</div>
-						<div className="flex justify-between gap-5">
-							<button type="button" value={`${rec.documentId}`} onClick={onEdit}
-								className="bg-sky-600 hover:bg-sky-700 active:ring-offset-1 
-								active:ring-neutral-100 active:ring-1 active:ring-offset-black text-white text-center rounded-md w-max p-2"
-							>
-								Edit
-							</button>
-							
-							{!(rec.programs.length > 0) &&
-								<button
-									type="button" 
-									value={`${rec.documentId}`} onClick={onDelete}
-									className="bg-red-600 hover:bg-red-700 active:ring-offset-1 
-									active:ring-neutral-100 active:ring-1 active:ring-offset-black text-white rounded-md w-max p-2"
-								>
-									Delete
-								</button>
-							}
-						</div>
-					</div>
-				))
-			}
-			<form className="w-[95%] sm:w-[90%] bg-[#242628] text-white rounded-md p-5 m-5 gap-3 flex justify-between items-center"
-			onSubmit={addCategory}>
-				<input type="text" name="newCategory" id="newCategory" 
-				className="rounded-md p-2 text-black" placeholder="Add new category" required
-				value={newCategory} onChange={changeNewCategory} />
-				<button type="submit"
-					className="bg-[#b3ff00] hover:bg-[#9ee004] active:ring-offset-1 
-					active:ring-neutral-100 active:ring-1 active:ring-offset-black text-black text-center rounded-md w-max p-2"
-				>
-					Add
-				</button>
-			</form>
-    </div>
+					))
+				}
+				<form className="w-[95%] sm:w-[90%] bg-[#242628] text-white rounded-md p-5 m-5 gap-3 flex justify-between items-center"
+				onSubmit={addCategory}>
+					<input type="text" name="newCategory" id="newCategory" 
+						className="rounded-md p-2 text-black" placeholder="Add new category" required
+						value={newCategory} onChange={changeNewCategory} 
+					/>
+					<ConfirmBtn btnType="submit" padding="p-2" text="Add" />
+				</form>
+			</div>
+    </>
   );
 };
 

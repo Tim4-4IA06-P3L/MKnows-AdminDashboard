@@ -1,13 +1,16 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
-import { useRouter } from "next/navigation";
 import ProfilePhotoModal from "../../components/ProfilePhotoModal";
 import Toast from "../../components/Toast";
 import Spinner from "../../components/Spinner";
+import Avatar from "../../components/Avatar";
+import CancelBtn from "../../components/CancelBtn";
+import ConfirmBtn from "../../components/ConfirmBtn";
+import BlockBackground from "../../components/BlockBackground";
+import PasswordInput from "../../components/PasswordInput";
 
 const page = () => {
-	const router = new useRouter();
 	const AdminID = useRef("");
 	const [newUsername, setNewUsername] = useState("");
 	const [newPassword, setNewPassword] = useState("");
@@ -48,7 +51,6 @@ const page = () => {
 			setNewPhoto(e.target.files[0]);
 			setNewPhotoExt(e.target.files[0].type.split("/")[1]);
 			const artificialURL = URL.createObjectURL(e.target.files[0]);
-			console.log(artificialURL);
 			setNewPhotoURL(artificialURL);
 			setShowModal(false);
 		}
@@ -57,6 +59,8 @@ const page = () => {
 	const cancelUpload = (e) => {
 		setNewPhotoURL(oldPhotoURL.current);
 		setNewPhotoExt("");
+		setNewPhoto(null);
+		setRemovePhoto(!removePhoto);
 	};
 	
 	const changeRemovePhoto = (e) => {
@@ -142,7 +146,7 @@ const page = () => {
 			if (!removeRes.ok) {
 				setIsSubmit(false);
 				setToastMsg("Failed updating photo");
-				setShowToast(true);
+				handleToast();
 				return;
 			}
 		}
@@ -155,7 +159,7 @@ const page = () => {
 			} else {
 				setIsSubmit(false);
 				setToastMsg("Different password confirmation");
-				setShowToast(true);
+				handleToast();
 				return;
 			}
 		}
@@ -167,11 +171,11 @@ const page = () => {
 		if (!response.ok) {
 			setIsSubmit(false);
 			setToastMsg("Wrong password");
-			setShowToast(true);
+			handleToast();
 			return;
 		}
 		
-		router.push("/admin/dashboard");
+		window.location.reload();
 	};
 	
 	useEffect(() => {
@@ -179,41 +183,28 @@ const page = () => {
 	}, []);
 	
   return (
-    <div className="flex flex-col justify-center items-center md:ml-[220px] p-8">
+    <>
 			{(isSubmit || !allLoaded) && 
-			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
+			<BlockBackground bgColor="bg-neutral-500/[0.5]" >
 				<Spinner />
-			</div>}
+			</BlockBackground>}
 			
 			{showModal && 
-			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
-				<ProfilePhotoModal avatarURL={newPhotoURL} onClose={toggleShowModal} onUpload={changePhoto} onRemove={changeRemovePhoto} />
-			</div>}
+			<ProfilePhotoModal avatarURL={newPhotoURL} onClose={toggleShowModal} onUpload={changePhoto} onRemove={changeRemovePhoto} />}
 			
-			{showToast && 
-			<div className="fixed top-20 right-8 w-full z-[100]">
-				<Toast message={toastMsg} onClose={() => setShowToast(false)} />
-			</div>}
+			{showToast && <Toast message={toastMsg} />}
 			
       <div className="flex flex-col justify-start relative w-full sm:w-[60%] gap-8">
 				<h1 className="text-3xl md:text-6xl font-bold">Your Account</h1>
 				<div className="flex flex-row justify-start items-center gap-3 w-max">
-					<div 
-						className="w-8 h-8 sm:w-16 sm:h-16 rounded-[50%] bg-neutral-500 bg-contain bg-center"
-						style={{ backgroundImage: `url('${newPhotoURL}')` }}>
-					</div>
-					<p onClick={toggleShowModal}
-					className="py-2 px-5 bg-[#b3ff00] text-green-800 hover:bg-[#9ee004] cursor-pointer 
-					active:ring-offset-2 active:ring-2 active:ring-neutral-800 font-semibold rounded-md">
-						Update Profile Photo
-					</p>
+					<Avatar PhotoURL={newPhotoURL} className="border-[1px] border-black" />
+					
+					<ConfirmBtn onClick={toggleShowModal} btnType="button" padding="py-2 px-5" 
+						fontWeight="font-semibold" text="Update Profile Photo" 
+					/>
+					
 					{(oldPhotoURL.current != newPhotoURL) &&
-						<p onClick={cancelUpload}
-						className="py-2 px-5 bg-white text-black hover:bg-neutral-200 cursor-pointer
-						active:ring-offset-2 active:ring-2 active:ring-neutral-800 font-semibold rounded-md
-						border-2 border-neutral-800">
-							Cancel
-						</p>
+						<CancelBtn onClick={cancelUpload} padding="py-2 px-5" fontWeight="font-semibold" text="Cancel" />
 					}
 				</div>
 				
@@ -224,64 +215,33 @@ const page = () => {
 						className="w-full rounded-md border-2 border-neutral-500 py-5 px-2 mb-8"
 					/>
 					
-					<label htmlFor="oldPassword" className="font-bold">Current Password</label>
-					<div className="relative mb-8">
-						<input type={hideOldPassword ? "password" : "text"} id="oldPassword" name="oldPassword" value={oldPassword} 
-							onChange={changeOldPassword} autoComplete="one-time-code"
-							className="w-full rounded-md border-2 border-neutral-500 py-5 px-2"
-						/>
-						<button onClick={toggleHideOldPassword} type="button"
-							className="flex justify-center items-center absolute right-3 w-5 h-5 top-6">
-							{hideOldPassword ? <EyeIcon /> : <EyeSlashIcon />}
-						</button>
-					</div>
+					<PasswordInput idName="oldPassword" label="Current Password" hideStatus={hideOldPassword}
+						value={oldPassword} required={Boolean(newPassword || confirmNewPassword)} 
+						onChange={changeOldPassword} toggle={toggleHideOldPassword}
+					/>
 					
 					<div className="flex flex-row gap-2 w-[100%] items-end">
 						<div className="basis-[50%]">
-							<label htmlFor="password" className="font-bold">New Password</label>
-							<div className="relative mb-8">
-								<input type={hidePassword ? "password" : "text"} id="password" name="password" value={newPassword} 
-									onChange={changePassword} autoComplete="one-time-code"
-									className="w-full rounded-md border-2 border-neutral-500 py-5 px-2"
-								/>
-								<button onClick={toggleHidePassword} type="button"
-									className="flex justify-center items-center absolute right-3 w-5 h-5 top-6">
-									{hidePassword ? <EyeIcon /> : <EyeSlashIcon />}
-								</button>
-							</div>
+							<PasswordInput idName="password" label="New Password" hideStatus={hidePassword}
+								value={newPassword} required={Boolean(oldPassword || confirmNewPassword)} 
+								onChange={changePassword} toggle={toggleHidePassword}
+							/>
 						</div>
 						<div className="basis-[50%]">
-							<label htmlFor="confirmPassword" className="font-bold">Confirm New Password</label>
-							<div className="relative mb-8">
-								<input type={hidePassword ? "password" : "text"} id="confirmPassword" name="confirmPassword" value={confirmNewPassword} 
-									onChange={changeConfirmPassword} autoComplete="one-time-code"
-									className="w-full rounded-md border-2 border-neutral-500 py-5 px-2"
-								/>
-								<button onClick={toggleHideConfirmPassword} type="button"
-									className="flex justify-center items-center absolute right-3 w-5 h-5 top-6">
-									{hideConfirmPassword ? <EyeIcon /> : <EyeSlashIcon />}
-								</button>
-							</div>
+							<PasswordInput idName="confirmPassword" label="Confirm New Password" hideStatus={hideConfirmPassword}
+								value={confirmNewPassword} required={Boolean(oldPassword || newPassword)} 
+								onChange={changeConfirmPassword} toggle={toggleHideConfirmPassword}
+							/>
 						</div>
 					</div>
 					
 					<div className="relative flex flex-row gap-3 self-end">
-						<a
-							href="/admin/dashboard"
-							className="py-2 px-5 bg-white text-black hover:bg-neutral-200 
-							active:ring-offset-2 active:ring-2 active:ring-neutral-800 
-							font-semibold rounded-md border-2 border-neutral-800">
-							Cancel
-						</a>
-						<button type="submit" 
-						className="py-2 px-5 bg-[#b3ff00] text-green-800 hover:bg-[#9ee004] 
-						active:ring-offset-2 active:ring-2 active:ring-neutral-800 font-semibold rounded-md">
-							Save
-						</button>
+						<CancelBtn padding="py-2 px-5" href="/admin/dashboard" text="Cancel" fontWeight="font-semibold" />
+						<ConfirmBtn padding="py-2 px-5" btnType="submit" fontWeight="font-semibold" text="Save" />
 					</div>
 				</form>
 			</div>
-    </div>
+    </>
   );
 };
 

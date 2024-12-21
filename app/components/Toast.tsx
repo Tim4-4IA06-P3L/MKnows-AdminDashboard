@@ -1,14 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-const Toast = ( {message, onClose} ) => {
-
-	useEffect(() => {
-		const timer = setTimeout(onClose, 5000);
-		return () => clearTimeout(timer);
-	}, []);
-	
+const Toast = ( {error=true, message, onClose} ) => {
 	return (
-		<div className="absolute p-3 text-center bg-red-200 text-red-600 font-bold rounded-xl shadow-lg top-10 right-10 animate-slide-up">
+		<div 
+			className={`fixed p-3 text-center font-bold rounded-xl shadow-lg z-[100]
+			top-20 right-8 animate-slide-up ${error ? "bg-red-200 text-red-600" : "bg-green-200 text-green-600"}`}
+		>
 			{message}
 		</div>
 	);

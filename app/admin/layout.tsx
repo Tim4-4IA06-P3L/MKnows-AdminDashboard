@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Spinner from "../components/Spinner";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import BlockBackground from "../components/BlockBackground";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -49,9 +50,9 @@ export default function Layout({
 
   if (!authorized) {
     return (
-      <div className="flex justify-center items-center h-screen">
+			<BlockBackground>
         <Spinner />
-      </div>
+      </BlockBackground>
     );
   }
 
@@ -59,7 +60,9 @@ export default function Layout({
 		<main className={`${poppins.className} antialiased h-screen`}>
 			<Header />
 			<Sidebar logOut={logOut} />
-			{children}
+			<div className="flex flex-col justify-center items-center md:ml-[220px] p-8 gap-8">
+				{children}
+			</div>
 		</main>
   );
 }

@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import Toast from "../../../components/Toast";
 import Spinner from "../../../components/Spinner";
 import FileCards from "../../../components/FileCards";
+import CancelBtn from "../../../components/CancelBtn";
+import ConfirmBtn from "../../../components/ConfirmBtn";
 
 const page = ({ params }: { params: Promise<{id: string}> }) => {
 	const { id } = React.use(params);
@@ -230,7 +232,7 @@ const page = ({ params }: { params: Promise<{id: string}> }) => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center items-center md:ml-[220px] p-8 z-0">
+    <>
 			{(isSubmit || !allLoaded) && 
 			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
 				<Spinner />
@@ -254,11 +256,10 @@ const page = ({ params }: { params: Promise<{id: string}> }) => {
 			
       <section className="flex justify-center mt-8 w-full">
         <form
-          className="flex flex-row flex-wrap justify-around w-full"
-          method="POST"
+          className="flex flex-row flex-wrap justify-around w-full gap-3 lg:gap-0"
           onSubmit={handleUpdate}
         >
-          <div className="flex flex-col space-y-3 basis-[90%] md:basis-[40%]">
+          <div className="flex flex-col space-y-3 basis-[90%] lg:basis-[45%]">
             <div className="flex flex-col space-y-2">
               <label className="font-semibold" htmlFor="title">
                 Title <span className="text-red-500 font-semibold">*</span>
@@ -349,7 +350,7 @@ const page = ({ params }: { params: Promise<{id: string}> }) => {
             </div>
           </div>
 
-          <div className="relative flex flex-col space-y-3 basis-[90%] md:basis-[40%] mt-2 md:mt-0">
+          <div className="relative flex flex-col space-y-3 basis-[90%] lg:basis-[45%] mt-2 md:mt-0">
             <div className="flex flex-col space-y-2">
               <p className="font-semibold">
                 File <span className="text-red-500 font-semibold">*</span>
@@ -424,24 +425,14 @@ const page = ({ params }: { params: Promise<{id: string}> }) => {
 								</div>
 							</div>
             </div>
-            <div className="md:absolute w-full flex flex-row justify-end gap-8 md:bottom-0">
-              <a
-                href="/admin/our-programs"
-                className="py-2 px-5 bg-white text-black hover:bg-neutral-200 
-								active:ring-offset-2 active:ring-2 active:ring-neutral-800 
-								font-semibold rounded-md border-2 border-neutral-800">
-                Cancel
-              </a>
-              <button type="submit" 
-							className="py-2 px-5 bg-[#b3ff00] text-green-800 hover:bg-[#9ee004] 
-							active:ring-offset-2 active:ring-2 active:ring-neutral-800 font-semibold rounded-md">
-                Save
-              </button>
+            <div className="lg:absolute w-full flex flex-row justify-end gap-8 lg:bottom-0">
+							<CancelBtn href="/admin/our-programs" padding="py-2 px-5" fontWeight="font-semibold" text="Cancel" />
+							<ConfirmBtn btnType="submit" padding="py-2 px-5" fontWeight="font-semibold" text="Save" />
             </div>
           </div>
         </form>
       </section>
-    </div>
+    </>
   );
 };
 

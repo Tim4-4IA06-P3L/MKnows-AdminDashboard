@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import AdminLogo from "./AdminLogo";
+import Avatar from "./Avatar";
 
 const Header = () => {
 	const [avatarURL, setAvatarURL] = useState("/Avatar101.jpg");
@@ -25,10 +26,7 @@ const Header = () => {
   return (
     <header className="sticky top-0 flex justify-between px-8 items-center h-[15%] w-full bg-[#242628] z-50">
 			<AdminLogo containerClassName="w-32" />
-			<a className="cursor-pointer rounded-[50%] w-12 h-12 bg-contain bg-center border-[1px] border-white" 
-				style={{ backgroundImage: `url('${avatarURL}')` }}
-				href="/admin/me">
-			</a>
+			<Avatar PhotoURL={avatarURL} className="cursor-pointer border-[1px] border-white" href="/admin/me" />
     </header>
   );
 };

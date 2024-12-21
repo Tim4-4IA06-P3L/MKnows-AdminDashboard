@@ -6,6 +6,7 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import Toast from "./components/Toast";
 import Spinner from "./components/Spinner";
 import AdminLogo from "./components/AdminLogo";
+import BlockBackground from "./components/BlockBackground";
 
 export default function Home() {
 	
@@ -79,18 +80,16 @@ export default function Home() {
 	
 	if (authorized) {
     return (
-      <div className="flex justify-center items-center h-screen">
+			<BlockBackground>
         <Spinner />
-      </div>
+      </BlockBackground>
     );
   }
-	
-	const sleep = async () => await setTimeout(() => console.log("Show page"), 5000);
 	
   return (
     <main className="flex items-center justify-center h-screen">
       {showToast && (
-        <Toast message={error} onClose={() => setShowToast(false)} />
+        <Toast message={error} />
       )}
       <div className="min-[320px]:max-sm:w-4/5 sm:w-2/5">
 				<AdminLogo containerClassName="flex items-center flex-col pb-10 w-full" />
@@ -141,7 +140,8 @@ export default function Home() {
 
 					<button
 						type="submit"
-						className="bg-sky-500 font-semibold text-white p-2 mt-4 rounded-lg w-full"
+						className="bg-sky-600 font-semibold text-white p-2 mt-4 rounded-lg w-full
+						hover:bg-sky-700 active:ring-offset-1 active:ring-black active:ring-1 active:ring-offset-neutral-100"
 					>
 						Log In
 					</button>

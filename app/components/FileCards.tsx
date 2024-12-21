@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Thumbnail from "./Thumbnail";
 
 const FileCards = ({ fileType, files, onFileSelected, onImageSelected, onClose }) => {
 	return (
@@ -17,17 +18,8 @@ const FileCards = ({ fileType, files, onFileSelected, onImageSelected, onClose }
 					{files.map((file) => (
 						<div className="basis-[18%] flex flex-col justify-center items-center" key={file.id}>
 							<div className="relative w-[180px] h-[100px] flex justify-center z-0">
-								<Image 
-									src={`${process.env.STRAPI_URL}${file.url}`}
-									width={file.width}
-									height={file.height}
-									style={{
-										objectFit: "cover",
-										objectPosition: "center",
-										width: "100%",
-										height: "auto",
-									}}
-									alt="Thumbnail"
+								<Thumbnail src={`${process.env.STRAPI_URL}${file.url}`} width={file.width} height={file.height}
+									objectFit="cover" objectPosition="center"
 								/>
 								<a href={`${process.env.STRAPI_URL}${file.url}`} target="_blank"
 									className="absolute w-[180px] h-[100px] text-white

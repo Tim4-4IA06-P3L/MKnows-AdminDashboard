@@ -16,7 +16,7 @@ const page = () => {
 	}, []);
 
   return (
-    <div className="flex flex-col justify-center items-center md:ml-[220px] px-2 py-8">
+    <>
       <h1 className="text-2xl md:text-5xl font-bold">Public & Online Training Schedule Request</h1>
 			
 			{schedule.length == 0 && (
@@ -42,22 +42,22 @@ const page = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{schedule.map((rec) => (
-								<tr className="border-b-[1px] border-neutral-300 bg-neutral-100" key={rec.documentId}>
-									<th className="px-2 py-8">{rec.Name}</th>
+							{schedule.map((rec, index) => (
+								<tr className={`${index != schedule.length - 1 && "border-b-[1px] border-neutral-300"} bg-neutral-100`} key={rec.documentId}>
+									<th className={`px-2 py-8 ${index == schedule.length - 1 && "rounded-bl-md"}`}>{rec.Name}</th>
 									<th className="px-2 py-8">{rec.Company}</th>
 									<th className="px-2 py-8">{rec.Position}</th>
 									<th className="px-2 py-8">{rec.Office_Number}</th>
 									<th className="px-2 py-8">{rec.WhatsApp_Number}</th>
 									<th className="px-2 py-8">{rec.Email}</th>
-									<th className="px-2 py-8">{rec.Training_Type}</th>
+									<th className={`px-2 py-8 ${index == schedule.length - 1 && "rounded-br-md"}`}>{rec.Training_Type}</th>
 								</tr>
 							))}
 						</tbody>
 					</table>
 				</div>
 			}
-    </div>
+    </>
   );
 };
 

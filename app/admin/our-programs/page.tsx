@@ -2,6 +2,12 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import DeleteModal from "../../components/DeleteModal";
+import ConfirmBtn from "../../components/ConfirmBtn";
+import EditBtn from "../../components/EditBtn";
+import DeleteBtn from "../../components/DeleteBtn";
+import Thumbnail from "../../components/Thumbnail";
+import BlockBackground from "../../components/BlockBackground";
+import NoContentBox from "../../components/NoContentBox";
 import { Program } from "../../Types";
 
 const page = () => {
@@ -14,7 +20,7 @@ const page = () => {
   const [data, setData] = useState<Array<Program | number>>([0]);
   const getPrograms = async () => {
     const programResponse = await fetch(
-      `${process.env.STRAPI_URL}/api/our-programs?populate=*`
+      `${process.env.STRAPI_URL}/api/our-programs?populate=*&sort=Title`
     );
     const responseJson = await programResponse.json();
     const programs = await responseJson.data;
@@ -90,30 +96,24 @@ const page = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center md:ml-[220px] p-8 gap-8">
+    <>
       {showModal && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
-          <DeleteModal checkboxFileStatus={deleteFileStatus} checkboxImageStatus={deleteImageStatus} 
-					changeCheckboxFile={changeDeleteFileCheckbox} changeCheckboxImage={changeDeleteImageCheckbox} 
-					onCancel={confirmCancel} onDelete={confirmDelete} />
-        </div>
+				<BlockBackground bgColor="bg-neutral-500/[0.5]">
+          <DeleteModal messageType="Delete Program?" modalType="program" 
+						checkboxFileStatus={deleteFileStatus} checkboxImageStatus={deleteImageStatus} 
+						changeCheckboxFile={changeDeleteFileCheckbox} changeCheckboxImage={changeDeleteImageCheckbox} 
+						onCancel={confirmCancel} onDelete={confirmDelete} 
+					/>
+        </BlockBackground>
       )}
+			
       <section className="flex justify-between items-center w-full">
         <h1 className="text-3xl md:text-6xl font-bold">Our Programs</h1>
-        <a
-          href="/admin/our-programs/add"
-          className="px-5 py-3 rounded-lg bg-[#b3ff00] hover:bg-[#9ee004] 
-				active:ring-offset-2 active:ring-2 active:ring-neutral-800 text-center font-semibold"
-        >
-          Add a program
-        </a>
+				<ConfirmBtn href="/admin/our-programs/add" padding="px-5 py-3" fontWeight="font-semibold" text="Add a program" />
       </section>
+			
       {data.length == 0 && (
-        <section className="flex justify-center mt-8">
-          <div className="p-8 bg-neutral-200 rounded-lg">
-            <p className="font-semibold">You haven't had any programs yet.</p>
-          </div>
-        </section>
+				<NoContentBox message="You haven't had any programs yet." />
       )}
 
       {data[0] != 0 && data.length > 0 && (
@@ -126,18 +126,9 @@ const page = () => {
                   key={rec.documentId}
                 >
                   <div className="relative h-full basis-[20%] flex-shrink-0">
-                    <Image
-                      src={`${process.env.STRAPI_URL}${rec.Thumbnail.url}`}
-                      width={rec.Thumbnail.width}
-                      height={rec.Thumbnail.height}
-                      style={{
-                        objectFit: "contain",
-                        objectPosition: "center",
-                        width: "auto",
-                        height: "100%",
-                      }}
-                      alt="Thumbnail"
-                    />
+										<Thumbnail src={`${process.env.STRAPI_URL}${rec.Thumbnail.url}`} width={rec.Thumbnail.width} 
+											height={rec.Thumbnail.height} objectFit="contain" objectPosition="center" 
+										/>
                   </div>
 
                   <div className="text-white basis-[70%] text-wrap">
@@ -152,28 +143,18 @@ const page = () => {
                   </div>
 
                   <div className="flex flex-col flex-shrink-0 items-center justify-around w-[120px] h-full right-0 space-y-5">
-                    <a href={`/admin/our-programs/${rec.documentId}`}
-                      className="bg-sky-600 hover:bg-sky-700 active:ring-offset-1 
-							active:ring-neutral-100 active:ring-1 active:ring-offset-black text-white text-center rounded-md w-[60%] py-2"
-                    >
-                      Edit
-                    </a>
-                    <button
-                      type="button"
-                      value={`["${rec.documentId}", ${rec.Document.id}, ${rec.Thumbnail.id}]`}
-                      onClick={onDelete}
-                      className="bg-red-600 hover:bg-red-700 active:ring-offset-1 
-							active:ring-neutral-100 active:ring-1 active:ring-offset-black text-white rounded-md w-[60%] py-2"
-                    >
-                      Delete
-                    </button>
+										<EditBtn href={`/admin/our-programs/${rec.documentId}`} width="w-[60%]" padding="py-2" />
+										<DeleteBtn btnType="button" 
+											value={`["${rec.documentId}", ${rec.Document.id}, ${rec.Thumbnail.id}]`} 
+											onClick={onDelete} width="w-[60%]" padding="py-2"
+										/>
                   </div>
                 </div>
               )
           )}
         </section>
       )}
-    </div>
+    </>
   );
 };
 
