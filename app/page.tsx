@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import Toast from "./components/Toast";
 import Spinner from "./components/Spinner";
+import AdminLogo from "./components/AdminLogo";
 
 export default function Home() {
 	
@@ -21,7 +22,7 @@ export default function Home() {
 		if (valid.status == 400) {
 			setAuthorized(false);
 		} else {
-			router.push("/dashboard");
+			router.push("/admin/dashboard");
 		}
 	};
 	
@@ -64,7 +65,7 @@ export default function Home() {
       });
 
       if (loginReq.status == 200) {
-        router.push("/dashboard");
+        router.push("/admin/dashboard");
       } else {
         setError("Invalid email or password");
         handleToast();
@@ -87,72 +88,65 @@ export default function Home() {
 	const sleep = async () => await setTimeout(() => console.log("Show page"), 5000);
 	
   return (
-    <div className="flex items-center justify-center h-screen">
+    <main className="flex items-center justify-center h-screen">
       {showToast && (
         <Toast message={error} onClose={() => setShowToast(false)} />
       )}
       <div className="min-[320px]:max-sm:w-4/5 sm:w-2/5">
-        <div className="w-full">
-          <div className="flex items-center flex-col pb-10 w-full">
-            <img
-              src="/MKnows_Admin.png"
-              alt="M-Knows Admin Logo"
-              className="w-3/4"
-            />
-          </div>
-          <form method="POST" onSubmit={handleLogin}>
-            <label htmlFor="email" className="font-medium mb-4">
-              Email
-            </label>
-            <br />
-            <input
-              type="email"
-              name="email"
-              id="email"
-              value={email}
+				<AdminLogo containerClassName="flex items-center flex-col pb-10 w-full" />
+				
+				<form method="POST" onSubmit={handleLogin}>
+					<label htmlFor="email" className="font-medium mb-4">
+						Email
+					</label>
+					<br />
+					<input
+						type="email"
+						name="email"
+						id="email"
+						value={email}
+						required
+						onChange={(e) => handleEmailChange(e)}
+						placeholder="Enter your email"
+						className="bg-neutral-100 rounded-md mb-3 h-10 p-4 w-full border-2"
+					/>
+					<br />
+					<label htmlFor="password" className="font-medium mb-4">
+						Kata Sandi
+					</label>
+					<br />
+					<div className="relative h-10 w-full">
+						<input
+							type={showPassword ? "text" : "password"}
+							name="password"
+							id="password"
+							value={password}
 							required
-              onChange={(e) => handleEmailChange(e)}
-              placeholder="Enter your email"
-              className="bg-neutral-100 rounded-md mb-3 h-10 p-4 w-full border-2"
-            />
-            <br />
-            <label htmlFor="password" className="font-medium mb-4">
-              Kata Sandi
-            </label>
-            <br />
-            <div className="relative h-10 w-full">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                id="password"
-                value={password}
-								required
-                onChange={(e) => handlePasswordChange(e)}
-                placeholder="Enter your password"
-                className="bg-neutral-100 rounded-md h-full p-4 w-full mb-4 border-2"
-              />
-              <button
-                type="button"
-                onClick={togglePasswordVisible}
-                className="absolute right-3.5 top-3.5"
-              >
-                {showPassword ? (
-                  <EyeSlashIcon className="h-3 w-3" />
-                ) : (
-                  <EyeIcon className="h-3 w-3" />
-                )}
-              </button>
-            </div>
+							onChange={(e) => handlePasswordChange(e)}
+							placeholder="Enter your password"
+							className="bg-neutral-100 rounded-md h-full p-4 w-full mb-4 border-2"
+						/>
+						<button
+							type="button"
+							onClick={togglePasswordVisible}
+							className="absolute right-3.5 top-3.5"
+						>
+							{showPassword ? (
+								<EyeSlashIcon className="h-3 w-3" />
+							) : (
+								<EyeIcon className="h-3 w-3" />
+							)}
+						</button>
+					</div>
 
-            <button
-              type="submit"
-              className="bg-sky-500 font-semibold text-white p-2 mt-4 rounded-lg w-full"
-            >
-              Log In
-            </button>
-          </form>
-        </div>
+					<button
+						type="submit"
+						className="bg-sky-500 font-semibold text-white p-2 mt-4 rounded-lg w-full"
+					>
+						Log In
+					</button>
+				</form>
       </div>
-    </div>
+    </main>
   );
 }

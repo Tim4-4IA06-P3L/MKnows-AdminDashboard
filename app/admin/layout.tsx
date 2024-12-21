@@ -1,9 +1,8 @@
 "use client";
 import { Poppins } from "next/font/google";
 import "../globals.css";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 import Spinner from "../components/Spinner";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
@@ -14,7 +13,7 @@ const poppins = Poppins({
   weight: "300",
 });
 
-export default function DashboardLayout({
+export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;

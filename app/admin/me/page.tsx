@@ -2,9 +2,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useRouter } from "next/navigation";
-import ProfilePhotoModal from "../components/ProfilePhotoModal";
-import Toast from "../components/Toast";
-import Spinner from "../components/Spinner";
+import ProfilePhotoModal from "../../components/ProfilePhotoModal";
+import Toast from "../../components/Toast";
+import Spinner from "../../components/Spinner";
 
 const page = () => {
 	const router = new useRouter();
@@ -171,7 +171,7 @@ const page = () => {
 			return;
 		}
 		
-		router.push("/dashboard");
+		router.push("/admin/dashboard");
 	};
 	
 	useEffect(() => {
@@ -267,7 +267,7 @@ const page = () => {
 					
 					<div className="relative flex flex-row gap-3 self-end">
 						<a
-							href="/dashboard"
+							href="/admin/dashboard"
 							className="py-2 px-5 bg-white text-black hover:bg-neutral-200 
 							active:ring-offset-2 active:ring-2 active:ring-neutral-800 
 							font-semibold rounded-md border-2 border-neutral-800">

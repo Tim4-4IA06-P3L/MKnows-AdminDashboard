@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import DeleteModal from "../components/DeleteModal";
-import { Program } from "../Types";
+import DeleteModal from "../../components/DeleteModal";
+import { Program } from "../../Types";
 
 const page = () => {
   const [deleteId, setDeleteId] = useState("");
@@ -101,7 +101,7 @@ const page = () => {
       <section className="flex justify-between items-center w-full">
         <h1 className="text-3xl md:text-6xl font-bold">Our Programs</h1>
         <a
-          href="/our-programs/add"
+          href="/admin/our-programs/add"
           className="px-5 py-3 rounded-lg bg-[#b3ff00] hover:bg-[#9ee004] 
 				active:ring-offset-2 active:ring-2 active:ring-neutral-800 text-center font-semibold"
         >
@@ -152,7 +152,7 @@ const page = () => {
                   </div>
 
                   <div className="flex flex-col flex-shrink-0 items-center justify-around w-[120px] h-full right-0 space-y-5">
-                    <a href={`/our-programs/${rec.documentId}`}
+                    <a href={`/admin/our-programs/${rec.documentId}`}
                       className="bg-sky-600 hover:bg-sky-700 active:ring-offset-1 
 							active:ring-neutral-100 active:ring-1 active:ring-offset-black text-white text-center rounded-md w-[60%] py-2"
                     >

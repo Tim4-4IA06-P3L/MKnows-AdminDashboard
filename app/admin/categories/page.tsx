@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import DeleteCategoryModal from "../components/DeleteCategoryModal";
-import EditCategoryModal from "../components/EditCategoryModal";
+import DeleteCategoryModal from "../../components/DeleteCategoryModal";
+import EditCategoryModal from "../../components/EditCategoryModal";
 
 const page = () => {
 	const [categories, setCategories] = useState([0]);
