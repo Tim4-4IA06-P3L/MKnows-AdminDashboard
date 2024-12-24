@@ -16,6 +16,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [showToast, setShowToast] = useState(false);
 	const [authorized, setAuthorized] = useState(true);
+	const [loading, setLoading] = useState(false);
   const router = useRouter();
 	
 	const checkValid = async () => {
@@ -52,7 +53,7 @@ export default function Home() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+		setLoading(true);
     try {
       const loginReq = await fetch("/api/auth", {
         method: "POST",
@@ -68,11 +69,13 @@ export default function Home() {
       if (loginReq.status == 200) {
         router.push("/admin/dashboard");
       } else {
+				setLoading(false);
         setError("Invalid email or password");
         handleToast();
       }
     } catch (err) {
       console.log(err.message);
+			setLoading(false);
       setError("Something's wrong");
       handleToast();
     }
@@ -80,7 +83,7 @@ export default function Home() {
 	
 	if (authorized) {
     return (
-			<BlockBackground>
+			<BlockBackground bgColor="bg-white">
         <Spinner />
       </BlockBackground>
     );
@@ -91,6 +94,13 @@ export default function Home() {
       {showToast && (
         <Toast message={error} />
       )}
+			
+			{loading &&
+				<BlockBackground bgColor="bg-white">
+					<Spinner />
+				</BlockBackground>
+			}
+			
       <div className="min-[320px]:max-sm:w-4/5 sm:w-2/5">
 				<AdminLogo containerClassName="flex items-center flex-col pb-10 w-full" />
 				
