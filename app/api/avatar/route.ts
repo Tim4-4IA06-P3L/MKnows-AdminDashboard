@@ -34,6 +34,9 @@ export async function POST(request) {
 	const sql = neon(`${process.env.NEON_URL}`);
 	
 	if (token) {
+		
+		const selectRes = await sql`SELECT * FROM avatar WHERE user_id = ${adminID};`;
+		
 		// POST the new avatar
 		const avatarFormData = new FormData();
 		avatarFormData.append('files', newAvatar);
@@ -49,8 +52,6 @@ export async function POST(request) {
 		const newAvatarId = newAvatarJson[0].id;
 		const newAvatarName = newAvatarJson[0].name;
 		const newAvatarURL = newAvatarJson[0].url;
-		
-		const selectRes = await sql`SELECT * FROM avatar WHERE user_id = ${adminID};`;
 		
 		if (selectRes.length > 0) {
 			const oldAvatarId = selectRes[0].avatar_id;
