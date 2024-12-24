@@ -7,6 +7,9 @@ import EditBtn from "../../components/EditBtn";
 import DeleteBtn from "../../components/DeleteBtn";
 import NoContentBox from "../../components/NoContentBox";
 import Toast from "../../components/Toast";
+import Title from "../../components/Title";
+import BlockBackground from "../../components/BlockBackground";
+import Spinner from "../../components/Spinner";
 
 const page = () => {
 	const [categories, setCategories] = useState([0]);
@@ -18,6 +21,7 @@ const page = () => {
 	const [editId, setEditId] = useState("");
 	const [toastMsg, setToastMsg] = useState("");
 	const [showToast, setShowToast] = useState(false);
+	const [allLoaded, setAllLoaded] = useState(false);
 	
 	const changeNewCategory = (e) => {
 		setNewCategory(e.target.value);
@@ -114,6 +118,7 @@ const page = () => {
 	
 	useEffect(() => {
 		getCategories();
+		setAllLoaded(true);
 	}, []);
 	
   return (
@@ -132,7 +137,13 @@ const page = () => {
 				<Toast message={toastMsg} error={false} />
 			}
 			
-      <h1 className="text-3xl md:text-6xl font-bold">Categories</h1>
+			{!allLoaded && 
+				<BlockBackground bgColor="bg-neutral-500/[0.5]">
+					<Spinner />
+				</BlockBackground>
+			}
+			
+			<Title title="Categories" />
 			
 			<div className="w-full flex flex-col justify-center items-center">
 				{categories.length == 0 &&
@@ -141,7 +152,7 @@ const page = () => {
 				
 				{(categories[0] != 0 && categories.length > 0) &&
 					categories.map((rec) => (
-						<div className="w-[95%] sm:w-[90%] bg-neutral-100 rounded-md p-5 m-5 gap-3 flex justify-between items-center" key={rec.documentId}>
+						<div className="w-full bg-neutral-100 rounded-md p-5 m-5 gap-3 flex justify-between items-center" key={rec.documentId}>
 							<div>
 								<p className="font-semibold">{rec.Category}</p>
 								{
@@ -160,7 +171,7 @@ const page = () => {
 						</div>
 					))
 				}
-				<form className="w-[95%] sm:w-[90%] bg-[#242628] text-white rounded-md p-5 m-5 gap-3 flex justify-between items-center"
+				<form className="w-full bg-[#242628] text-white rounded-md p-5 m-5 gap-3 flex justify-between items-center"
 				onSubmit={addCategory}>
 					<input type="text" name="newCategory" id="newCategory" 
 						className="rounded-md p-2 text-black" placeholder="Add new category" required

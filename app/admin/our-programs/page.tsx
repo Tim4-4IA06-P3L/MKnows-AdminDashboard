@@ -7,7 +7,9 @@ import EditBtn from "../../components/EditBtn";
 import DeleteBtn from "../../components/DeleteBtn";
 import Thumbnail from "../../components/Thumbnail";
 import BlockBackground from "../../components/BlockBackground";
+import Spinner from "../../components/Spinner";
 import NoContentBox from "../../components/NoContentBox";
+import Title from "../../components/Title";
 import { Program } from "../../Types";
 
 const page = () => {
@@ -18,6 +20,8 @@ const page = () => {
   const [deleteImageId, setDeleteImageId] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState<Array<Program | number>>([0]);
+	const [allLoaded, setAllLoaded] = useState(false);
+	
   const getPrograms = async () => {
     const programResponse = await fetch(
       `${process.env.STRAPI_URL}/api/our-programs?populate=*&sort=Title`
@@ -29,6 +33,7 @@ const page = () => {
 
   useEffect(() => {
     getPrograms();
+		setAllLoaded(true);
   }, []);
 
   const onDelete = (e) => {
@@ -40,6 +45,8 @@ const page = () => {
   };
 
   const confirmCancel = (e) => {
+		setDeleteFileStatus(false);
+		setDeleteImageStatus(false);
     setDeleteId("");
     setDeleteFileId("");
     setDeleteImageId("");
@@ -76,11 +83,15 @@ const page = () => {
             (rec) => typeof rec != "number" && rec.documentId != deleteId
           )
         );
+				setDeleteFileStatus(false);
+				setDeleteImageStatus(false);
         setDeleteId("");
         setDeleteFileId("");
         setDeleteImageId("");
         setShowModal(false);
       } else {
+				setDeleteFileStatus(false);
+				setDeleteImageStatus(false);
         setDeleteId("");
         setDeleteFileId("");
         setDeleteImageId("");
@@ -88,6 +99,8 @@ const page = () => {
       }
     } catch (err) {
       console.log(err.message);
+			setDeleteFileStatus(false);
+			setDeleteImageStatus(false);
       setDeleteId("");
       setDeleteFileId("");
       setDeleteImageId("");
@@ -107,8 +120,14 @@ const page = () => {
         </BlockBackground>
       )}
 			
+			{!allLoaded && 
+				<BlockBackground bgColor="bg-neutral-500/[0.5]">
+					<Spinner />
+				</BlockBackground>
+			}
+			
       <section className="flex justify-between items-center w-full">
-        <h1 className="text-3xl md:text-6xl font-bold">Our Programs</h1>
+				<Title title="Our Programs" />
 				<ConfirmBtn href="/admin/our-programs/add" padding="px-5 py-3" fontWeight="font-semibold" text="Add a program" />
       </section>
 			

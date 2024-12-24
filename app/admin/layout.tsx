@@ -21,6 +21,7 @@ export default function Layout({
 }>) {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
+	const [loadLogOut, setLoadLogOut] = useState(false);
 
   const checkAuthorized = async () => {
     const valid = await fetch("/api/validate");
@@ -38,11 +39,12 @@ export default function Layout({
 
   const logOut = async (e) => {
     e.preventDefault();
-
+		setLoadLogOut(true);
     const resLogOut = await fetch("/api/logout");
     if (resLogOut.status === 200) {
       router.push("/");
     } else {
+			setLoadLogOut(false);
       const message = resLogOut.json().then((data) => data.message);
       console.log(message);
     }
@@ -58,6 +60,11 @@ export default function Layout({
 
   return (
 		<main className={`${poppins.className} antialiased h-screen`}>
+			{loadLogOut && 
+			<BlockBackground bgColor="bg-neutral-500/[0.5]">
+				<Spinner />
+			</BlockBackground>
+			}
 			<Header />
 			<Sidebar logOut={logOut} />
 			<div className="flex flex-col justify-center items-center md:ml-[220px] p-8 gap-8">

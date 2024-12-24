@@ -9,6 +9,7 @@ import CancelBtn from "../../components/CancelBtn";
 import ConfirmBtn from "../../components/ConfirmBtn";
 import BlockBackground from "../../components/BlockBackground";
 import PasswordInput from "../../components/PasswordInput";
+import Title from "../../components/Title";
 
 const page = () => {
 	const AdminID = useRef("");
@@ -52,6 +53,7 @@ const page = () => {
 			setNewPhotoExt(e.target.files[0].type.split("/")[1]);
 			const artificialURL = URL.createObjectURL(e.target.files[0]);
 			setNewPhotoURL(artificialURL);
+			setRemovePhoto(false);
 			setShowModal(false);
 		}
 	};
@@ -60,7 +62,7 @@ const page = () => {
 		setNewPhotoURL(oldPhotoURL.current);
 		setNewPhotoExt("");
 		setNewPhoto(null);
-		setRemovePhoto(!removePhoto);
+		setRemovePhoto(false);
 	};
 	
 	const changeRemovePhoto = (e) => {
@@ -195,7 +197,7 @@ const page = () => {
 			{showToast && <Toast message={toastMsg} />}
 			
       <div className="flex flex-col justify-start relative w-full sm:w-[60%] gap-8">
-				<h1 className="text-3xl md:text-6xl font-bold">Your Account</h1>
+				<Title title="Your Account" />
 				<div className="flex flex-row justify-start items-center gap-3 w-max">
 					<Avatar PhotoURL={newPhotoURL} className="border-[1px] border-black" />
 					

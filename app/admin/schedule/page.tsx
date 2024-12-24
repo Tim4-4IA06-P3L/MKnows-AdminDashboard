@@ -1,8 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Title from "../../components/Title";
+import Spinner from "../../components/Spinner";
+import BlockBackground from "../../components/BlockBackground";
+import NoContentBox from "../../components/NoContentBox";
 
 const page = () => {
 	const [schedule, setSchedule] = useState([0]);
+	const [allLoaded, setAllLoaded] = useState(false);
 	
 	const getSchedule = async () => {
 		const response = await fetch('/api/schedule');
@@ -13,22 +18,25 @@ const page = () => {
 	
 	useEffect(() => {
 		getSchedule();
+		setAllLoaded(true);
 	}, []);
 
   return (
     <>
-      <h1 className="text-2xl md:text-5xl font-bold">Public & Online Training Schedule Request</h1>
+			<Title title="Public & Online Training Schedule Request" />
+			
+			{!allLoaded && 
+				<BlockBackground bgColor="bg-neutral-500/[0.5]">
+					<Spinner />
+				</BlockBackground>
+			}
 			
 			{schedule.length == 0 && (
-        <section className="flex justify-center mt-8">
-          <div className="p-8 bg-neutral-200 rounded-lg">
-            <p className="font-semibold">No schedule request yet.</p>
-          </div>
-        </section>
+				<NoContentBox message="No schedule request yet." />
       )}
 			
 			{(schedule[0] != 0 && schedule.length > 0) &&
-				<div className="w-[95%] overflow-x-auto">
+				<div className="w-full overflow-x-auto">
 					<table className="w-full mt-8 table-auto">
 						<thead>
 							<tr className="border-b-[1px] border-neutral-100 bg-neutral-800 text-white">

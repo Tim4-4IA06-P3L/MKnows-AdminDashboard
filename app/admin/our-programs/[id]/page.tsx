@@ -6,6 +6,8 @@ import Spinner from "../../../components/Spinner";
 import FileCards from "../../../components/FileCards";
 import CancelBtn from "../../../components/CancelBtn";
 import ConfirmBtn from "../../../components/ConfirmBtn";
+import BlockBackground from "../../../components/BlockBackground";
+import Title from "../../../components/Title";
 
 const page = ({ params }: { params: Promise<{id: string}> }) => {
 	const { id } = React.use(params);
@@ -145,8 +147,8 @@ const page = ({ params }: { params: Promise<{id: string}> }) => {
 		try {
 			const response = await fetch(`${process.env.STRAPI_URL}/api/upload/files`);
 			const res_json = await response.json();
-			setExistedFiles(res_json.filter((rec) => rec.name.includes("pdf") || rec.name.includes("PDF")));
-			setExistedImages(res_json.filter((rec) => !rec.name.includes("pdf") && !rec.name.includes("PDF") && !pattern.test(rec.name)));
+			setExistedFiles(res_json.filter((rec) => rec.ext.includes("pdf") || rec.ext.includes("PDF")));
+			setExistedImages(res_json.filter((rec) => !rec.ext.includes("pdf") && !rec.ext.includes("PDF") && !pattern.test(rec.name)));
 		} catch (err) {
 			return new Error(err.message);
 		}
@@ -234,32 +236,30 @@ const page = ({ params }: { params: Promise<{id: string}> }) => {
   return (
     <>
 			{(isSubmit || !allLoaded) && 
-			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
+			<BlockBackground bgColor="bg-neutral-500/[0.5]">
 				<Spinner />
-			</div>}
+			</BlockBackground>}
 			
-			{showToast && 
-			<div className="fixed top-20 right-8 w-full z-[100]">
-				<Toast message={toastMsg} onClose={() => setShowToast(false)} />
-			</div>}
+			{showToast && <Toast message={toastMsg} />}
 			
 			{showFilesPickWindow && 
-			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
+			<BlockBackground bgColor="bg-neutral-500/[0.5]">
 				<FileCards fileType="pdf" files={existedFiles} onFileSelected={changeSelectedExistedFile} onClose={() => setShowFilesPickWindow(false)} />
-			</div>}
-			{showImagesPickWindow && 
-			<div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-neutral-500/[0.5] z-[100]">
-				<FileCards fileType="image" files={existedImages} onImageSelected={changeSelectedExistedImage} onClose={() => setShowImagesPickWindow(false)} />
-			</div>}
+			</BlockBackground>}
 			
-      <h1 className="text-3xl md:text-6xl font-bold">Edit the Program</h1>
+			{showImagesPickWindow && 
+			<BlockBackground bgColor="bg-neutral-500/[0.5]">
+				<FileCards fileType="image" files={existedImages} onImageSelected={changeSelectedExistedImage} onClose={() => setShowImagesPickWindow(false)} />
+			</BlockBackground>}
+			
+			<Title title="Edit the Program" />
 			
       <section className="flex justify-center mt-8 w-full">
         <form
-          className="flex flex-row flex-wrap justify-around w-full gap-3 lg:gap-0"
+          className="flex flex-row flex-wrap justify-between w-full gap-3 lg:gap-0"
           onSubmit={handleUpdate}
         >
-          <div className="flex flex-col space-y-3 basis-[90%] lg:basis-[45%]">
+          <div className="flex flex-col space-y-3 basis-[100%] lg:basis-[45%]">
             <div className="flex flex-col space-y-2">
               <label className="font-semibold" htmlFor="title">
                 Title <span className="text-red-500 font-semibold">*</span>
@@ -350,7 +350,7 @@ const page = ({ params }: { params: Promise<{id: string}> }) => {
             </div>
           </div>
 
-          <div className="relative flex flex-col space-y-3 basis-[90%] lg:basis-[45%] mt-2 md:mt-0">
+          <div className="relative flex flex-col space-y-3 basis-[100%] lg:basis-[45%] mt-2 md:mt-0">
             <div className="flex flex-col space-y-2">
               <p className="font-semibold">
                 File <span className="text-red-500 font-semibold">*</span>
