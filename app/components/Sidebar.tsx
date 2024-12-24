@@ -82,12 +82,15 @@ const Sidebar = ({ logOut }) => {
 				>
 					<a href="/admin/uploads" className="flex flex-row">
 						<div className="h-6 w-6 mr-3">
-							<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+							<svg viewBox="0 0 24 24" 
+								fill="currentColor" 
+								xmlns="http://www.w3.org/2000/svg">
 								<g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
 								<g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
 								<g id="SVGRepo_iconCarrier">
-									<rect x="0" fill="none" width="20" height="20"></rect>
-									<g><path d="M12 2l4 4v12H4V2h8zm0 4h3l-3-3v3z" fill="currentColor"></path></g>
+									<path fillRule="evenodd" clipRule="evenodd" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11.8107L14.4697 13.5303C14.7626 13.8232 15.2374 13.8232 15.5303 13.5303C15.8232 13.2374 15.8232 12.7626 15.5303 12.4697L12.5303 9.46967C12.3897 9.32902 12.1989 9.25 12 9.25C11.8011 9.25 11.6103 9.32902 11.4697 9.46967L8.46967 12.4697C8.17678 12.7626 8.17678 13.2374 8.46967 13.5303C8.76256 13.8232 9.23744 13.8232 9.53033 13.5303L11.25 11.8107V17C11.25 17.4142 11.5858 17.75 12 17.75ZM8 7.75C7.58579 7.75 7.25 7.41421 7.25 7C7.25 6.58579 7.58579 6.25 8 6.25H16C16.4142 6.25 16.75 6.58579 16.75 7C16.75 7.41421 16.4142 7.75 16 7.75H8Z" 
+										fill="currentColor">
+									</path>
 								</g>
 							</svg>
 						</div>

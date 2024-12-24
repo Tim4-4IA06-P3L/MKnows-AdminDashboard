@@ -1,6 +1,6 @@
 import React from "react";
 
-const DeleteBtn = ({ onClick, value, btnType , width, padding, fontWeight }) => {
+const DeleteBtn = ({ onClick, value, btnType, width, padding, fontWeight, text="Delete" }) => {
 	return (
 		<button
 			type={btnType}
@@ -9,7 +9,7 @@ const DeleteBtn = ({ onClick, value, btnType , width, padding, fontWeight }) => 
 			active:ring-neutral-100 active:ring-1 active:ring-offset-black 
 			text-white rounded-md ${width} ${padding} ${fontWeight}`}
 		>
-			Delete
+			{text}
 		</button>
 	);
 };
