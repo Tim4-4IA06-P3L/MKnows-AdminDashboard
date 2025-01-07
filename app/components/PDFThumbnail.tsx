@@ -33,11 +33,8 @@ const PDFThumbnail = () => {
 							textTransform: "none",
 							textOrientation: "mixed",
 							whiteSpace: "normal",
-							shapePadding: 0,
 							isolation: "auto",
 							mixBlendMode: "normal",
-							solidColor: "#000000",
-							solidOpacity: 1,
 						}}
 					/>
 					<path
@@ -63,11 +60,8 @@ const PDFThumbnail = () => {
 							textTransform: "none",
 							textOrientation: "mixed",
 							whiteSpace: "normal",
-							shapePadding: 0,
 							isolation: "auto",
 							mixBlendMode: "normal",
-							solidColor: "#000000",
-							solidOpacity: 1,
 						}}
 					/>
 					<path
@@ -81,7 +75,6 @@ const PDFThumbnail = () => {
 						letterSpacing={0}
 						style={{
 							lineHeight: "125%",
-							InkscapeFontSpecification: "'Franklin Gothic Medium Cond'",
 						}}
 						wordSpacing={4.26000023}
 					/>

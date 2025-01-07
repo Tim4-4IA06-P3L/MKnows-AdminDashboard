@@ -21,7 +21,7 @@ export default function Layout({
 }>) {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
-	const [loadLogOut, setLoadLogOut] = useState(false);
+  const [loadLogOut, setLoadLogOut] = useState(false);
 
   const checkAuthorized = async () => {
     const valid = await fetch("/api/validate");
@@ -37,39 +37,37 @@ export default function Layout({
     checkAuthorized();
   }, []);
 
-  const logOut = async (e) => {
+  const logOut = async (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     e.preventDefault();
-		setLoadLogOut(true);
+    setLoadLogOut(true);
     const resLogOut = await fetch("/api/logout");
     if (resLogOut.status === 200) {
       router.push("/");
     } else {
-			setLoadLogOut(false);
-      const message = resLogOut.json().then((data) => data.message);
-      console.log(message);
+      setLoadLogOut(false);
     }
   };
 
   if (!authorized) {
     return (
-			<BlockBackground>
+      <BlockBackground bgColor="">
         <Spinner />
       </BlockBackground>
     );
   }
 
   return (
-		<main className={`${poppins.className} antialiased h-screen`}>
-			{loadLogOut && 
-			<BlockBackground bgColor="bg-neutral-500/[0.5]">
-				<Spinner />
-			</BlockBackground>
-			}
-			<Header />
-			<Sidebar logOut={logOut} />
-			<div className="flex flex-col justify-center items-center md:ml-[220px] p-8 gap-8">
-				{children}
-			</div>
-		</main>
+    <main className={`${poppins.className} antialiased h-full`}>
+      {loadLogOut &&
+        <BlockBackground bgColor="bg-neutral-500/[0.5]">
+          <Spinner />
+        </BlockBackground>
+      }
+      <Header />
+      <Sidebar logOut={logOut} />
+      <div className="flex flex-col justify-center items-center md:ml-[220px] p-8 gap-8">
+        {children}
+      </div>
+    </main>
   );
 }

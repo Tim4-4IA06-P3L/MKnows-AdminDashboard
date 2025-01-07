@@ -1,7 +1,7 @@
-import React from "react";
+import React, { FC } from "react";
 import Image from "next/image";
 
-const AdminLogo = ({ containerClassName }) => {
+const AdminLogo: FC<{ containerClassName: string }> = ({ containerClassName }) => {
 	return (
 		<div className={containerClassName}>
 			<Image

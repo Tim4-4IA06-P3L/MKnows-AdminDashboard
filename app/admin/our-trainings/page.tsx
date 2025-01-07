@@ -9,7 +9,7 @@ import BlockBackground from "../../components/BlockBackground";
 import Spinner from "../../components/Spinner";
 import NoContentBox from "../../components/NoContentBox";
 import Title from "../../components/Title";
-import { Bootcamp } from "../../Types";
+import { Training } from "../../Types";
 
 const Page = () => {
   const [deleteId, setDeleteId] = useState("");
@@ -18,20 +18,20 @@ const Page = () => {
   const [deleteImageStatus, setDeleteImageStatus] = useState(false);
   const [deleteImageId, setDeleteImageId] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [data, setData] = useState<Array<Bootcamp | number>>([0]);
+  const [data, setData] = useState<Array<Training | number>>([0]);
   const [allLoaded, setAllLoaded] = useState(false);
 
-  const getPrograms = async () => {
-    const programResponse = await fetch(
-      `${process.env.STRAPI_URL}/api/our-programs?populate=*&sort=Title`
+  const getTrainings = async () => {
+    const trainingResponse = await fetch(
+      `${process.env.STRAPI_URL}/api/trainings?populate=*&sort=Title`
     );
-    const responseJson = await programResponse.json();
-    const programs = await responseJson.data;
-    setData(programs);
+    const responseJson = await trainingResponse.json();
+    const trainings = await responseJson.data;
+    setData(trainings);
   };
 
   useEffect(() => {
-    getPrograms();
+    getTrainings();
     setAllLoaded(true);
   }, []);
 
@@ -71,7 +71,7 @@ const Page = () => {
       if (deleteImageStatus) {
         deleteFormData.append('deleteImageId', deleteImageId);
       }
-      const response = await fetch("/api/program", {
+      const response = await fetch("/api/training", {
         method: "DELETE",
         body: deleteFormData
       });
@@ -111,7 +111,7 @@ const Page = () => {
     <>
       {showModal && (
         <BlockBackground bgColor="bg-neutral-500/[0.5]">
-          <DeleteModal messageType="Delete Program?" modalType="program"
+          <DeleteModal messageType="Delete Training?" modalType="training"
             checkboxFileStatus={deleteFileStatus} checkboxImageStatus={deleteImageStatus}
             changeCheckboxFile={changeDeleteFileCheckbox} changeCheckboxImage={changeDeleteImageCheckbox}
             onCancel={confirmCancel} onDelete={confirmDelete}
@@ -126,12 +126,12 @@ const Page = () => {
       }
 
       <section className="flex justify-between items-center w-full">
-        <Title title="Our Programs" />
-        <ConfirmBtn href="/admin/our-programs/add" padding="px-5 py-3" fontWeight="font-semibold" text="Add a program" />
+        <Title title="Our Trainings" />
+        <ConfirmBtn href="/admin/our-trainings/add" padding="px-5 py-3" fontWeight="font-semibold" text="Add a training" />
       </section>
 
       {data.length == 0 && (
-        <NoContentBox message="You haven't had any programs yet." />
+        <NoContentBox message="You haven't had any trainings yet." />
       )}
 
       {data[0] != 0 && data.length > 0 && (
@@ -150,18 +150,16 @@ const Page = () => {
                   </div>
 
                   <div className="text-white basis-[70%] text-wrap">
-                    <p className="text-[12px]">{rec.Category.Category}</p>
-                    <h3 className="font-bold text-lg">{rec.Title}</h3>
-                    <p className="text-justify min-[320px]:max-sm:static sm:hidden">
-                      {rec.Level}
+                    <p className="text-[12px]">{`${rec.TrainingType} Training`}
+                      <span className="text-[12px] text-green-500">
+                        {`${rec.NewTraining ? " (New!)" : ""}`}
+                      </span>
                     </p>
-                    <p className="text-justify min-[320px]:max-sm:hidden">
-                      {rec.Description}
-                    </p>
+                    <h3 className="font-bold text-lg sm:text-2xl">{rec.Title}</h3>
                   </div>
 
                   <div className="flex flex-col flex-shrink-0 items-center justify-around w-[120px] h-full right-0 space-y-5">
-                    <EditBtn href={`/admin/our-programs/${rec.documentId}`} width="w-[60%]" padding="py-2" />
+                    <EditBtn href={`/admin/our-trainings/${rec.documentId}`} width="w-[60%]" padding="py-2" />
                     <DeleteBtn btnType="button"
                       value={`["${rec.documentId}", ${rec.Document.id}, ${rec.Thumbnail.id}]`}
                       onClick={onDelete} width="w-[60%]" padding="py-2"

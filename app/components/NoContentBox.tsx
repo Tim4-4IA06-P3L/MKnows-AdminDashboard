@@ -1,6 +1,6 @@
-import React from "react";
+import React, { FC } from "react";
 
-const NoContentBox = ({ message }) => {
+const NoContentBox: FC<{ message: string }> = ({ message }) => {
 	return (
 		<section className="flex justify-center mt-8">
 			<div className="p-8 bg-neutral-200 rounded-lg">

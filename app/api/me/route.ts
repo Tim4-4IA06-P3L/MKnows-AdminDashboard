@@ -1,7 +1,7 @@
 import { parse } from "cookie";
 import { neon } from "@neondatabase/serverless";
 
-export async function GET(request) {
+export async function GET(request: Request) {
 	const cookies = parse(request.headers.get("cookie") || "");
 	const sql = neon(`${process.env.NEON_URL}`);
 	const token = cookies.AdminJWT;
@@ -21,7 +21,7 @@ export async function GET(request) {
 	}
 }
 
-export async function PUT(request) {
+export async function PUT(request: Request) {
 	const cookies = parse(request.headers.get("cookie") || "");
 	const reqFormData = await request.formData();
 	const sql = neon(`${process.env.NEON_URL}`);

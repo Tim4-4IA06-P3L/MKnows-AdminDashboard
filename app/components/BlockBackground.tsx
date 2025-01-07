@@ -1,6 +1,6 @@
-import React from "react";
+import React, { FC, ReactNode } from "react";
 
-const BlockBackground = ({children, bgColor}) => {
+const BlockBackground: FC<{ children: ReactNode, bgColor: string }> = ({ children, bgColor }) => {
 	return (
 		<div className={`fixed top-0 left-0 w-full h-full flex justify-center items-center ${bgColor} z-[200]`}>
 			{children}

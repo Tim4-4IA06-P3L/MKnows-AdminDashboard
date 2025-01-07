@@ -4,37 +4,38 @@ import Title from "../../components/Title";
 import Spinner from "../../components/Spinner";
 import BlockBackground from "../../components/BlockBackground";
 import NoContentBox from "../../components/NoContentBox";
+import { Schedule } from "@/app/Types";
 
-const page = () => {
-	const [schedule, setSchedule] = useState([0]);
+const Page = () => {
+	const [schedule, setSchedule] = useState<Schedule[] | number[]>([0]);
 	const [allLoaded, setAllLoaded] = useState(false);
-	
+
 	const getSchedule = async () => {
 		const response = await fetch('/api/schedule');
 		const res_json = await response.json();
 		const data = await res_json.data;
 		setSchedule(data);
 	};
-	
+
 	useEffect(() => {
 		getSchedule();
 		setAllLoaded(true);
 	}, []);
 
-  return (
-    <>
+	return (
+		<>
 			<Title title="Public & Online Training Schedule Request" />
-			
-			{!allLoaded && 
+
+			{!allLoaded &&
 				<BlockBackground bgColor="bg-neutral-500/[0.5]">
 					<Spinner />
 				</BlockBackground>
 			}
-			
-			{schedule.length == 0 && (
+
+			{(schedule.length == 0 || schedule[0] == 0) && (
 				<NoContentBox message="No schedule request yet." />
-      )}
-			
+			)}
+
 			{(schedule[0] != 0 && schedule.length > 0) &&
 				<div className="w-full overflow-x-auto">
 					<table className="w-full mt-8 table-auto">
@@ -50,7 +51,7 @@ const page = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{schedule.map((rec, index) => (
+							{schedule.map((rec, index) => (typeof rec != 'number' &&
 								<tr className={`${index != schedule.length - 1 && "border-b-[1px] border-neutral-300"} bg-neutral-100`} key={rec.documentId}>
 									<th className={`px-2 py-8 ${index == schedule.length - 1 && "rounded-bl-md"}`}>{rec.Name}</th>
 									<th className="px-2 py-8">{rec.Company}</th>
@@ -65,8 +66,8 @@ const page = () => {
 					</table>
 				</div>
 			}
-    </>
-  );
+		</>
+	);
 };
 
-export default page;
+export default Page;

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { FC } from "react";
 
-const ViewFileCard = ({ href, size }) => {
+const ViewFileCard: FC<{ href: string, size: string }> = ({ href, size }) => {
 	return (
 		<a href={href} target="_blank"
 			className={`absolute ${size} text-white

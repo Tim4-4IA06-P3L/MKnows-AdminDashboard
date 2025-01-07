@@ -8,187 +8,200 @@ import CancelBtn from "../../../components/CancelBtn";
 import ConfirmBtn from "../../../components/ConfirmBtn";
 import BlockBackground from "../../../components/BlockBackground";
 import Title from "../../../components/Title";
+import { Category, StrapiFile } from "@/app/Types";
 
-const page = () => {
+const Page = () => {
 	const router = useRouter();
-	
-  const [title, setTitle] = useState("");
-  const [level, setLevel] = useState("Beginner");
-  const [desc, setDesc] = useState("");
-	
-  const [categories, setCategories] = useState([]); // List of categories
-  const [selectedCategory, setSelectedCategory] = useState(""); // Selected category from the list
-	const [newCategory, setNewCategory] = useState(""); // New category
-	const [addCategory, setAddCategory] = useState(false); // Status whether to add new category or select existed category
-	
-  const [fileName, setFileName] = useState("Upload PDF file"); // PDF Name
-  const [file, setFile] = useState(null); // Form file
-	const [uploadFile, setUploadFile] = useState(true); // Status whether to upload new file or pick existed file
-	const [existedFiles, setExistedFiles] = useState(null); // List of existed files
-	const [selectedExistedFile, setSelectedExistedFile] = useState(null); // Selected existed file
-	const [selectedExistedFileName, setSelectedExistedFileName] = useState("Select Existed File"); // Selected existed file name
-	
-  const [imageName, setImageName] = useState("Upload Thumbnail"); // Image Name
-  const [image, setImage] = useState(null); // Form image
-	const [uploadImage, setUploadImage] = useState(true); // Status whether to upload new image or pick existed image
-	const [existedImages, setExistedImages] = useState(null); // List of existed images
-	const [selectedExistedImage, setSelectedExistedImage] = useState(null); // Selected existed image
-	const [selectedExistedImageName, setSelectedExistedImageName] = useState("Select Existed Image"); // Selected existed image name
-	
-	const [showFilesPickWindow, setShowFilesPickWindow] = useState(false);
-	const [showImagesPickWindow, setShowImagesPickWindow] = useState(false);
-	
-	const [allLoaded, setAllLoaded] = useState(false); // If all existed data have been retrieved completely.
-	
+
+	const [title, setTitle] = useState<string>("");
+	const [level, setLevel] = useState<string>("Beginner");
+	const [desc, setDesc] = useState<string>("");
+
+	const [categories, setCategories] = useState<Category[]>([]); // List of categories
+	const [selectedCategory, setSelectedCategory] = useState<string>(""); // Selected category from the list
+	const [newCategory, setNewCategory] = useState<string>(""); // New category
+	const [addCategory, setAddCategory] = useState<boolean>(false); // Status whether to add new category or select existed category
+
+	const [fileName, setFileName] = useState<string>("Upload PDF file"); // PDF Name
+	const [file, setFile] = useState<File | null>(null); // Form file
+	const [uploadFile, setUploadFile] = useState<boolean>(true); // Status whether to upload new file or pick existed file
+	const [existedFiles, setExistedFiles] = useState<StrapiFile[] | null>(null); // List of existed files
+	const [selectedExistedFile, setSelectedExistedFile] = useState<number | null>(null); // Selected existed file
+	const [selectedExistedFileName, setSelectedExistedFileName] = useState<string>("Select Existed File"); // Selected existed file name
+
+	const [imageName, setImageName] = useState<string>("Upload Thumbnail"); // Image Name
+	const [image, setImage] = useState<File | null>(null); // Form image
+	const [uploadImage, setUploadImage] = useState<boolean>(true); // Status whether to upload new image or pick existed image
+	const [existedImages, setExistedImages] = useState<StrapiFile[] | null>(null); // List of existed images
+	const [selectedExistedImage, setSelectedExistedImage] = useState<number | null>(null); // Selected existed image
+	const [selectedExistedImageName, setSelectedExistedImageName] = useState<string>("Select Existed Image"); // Selected existed image name
+
+	const [showFilesPickWindow, setShowFilesPickWindow] = useState<boolean>(false);
+	const [showImagesPickWindow, setShowImagesPickWindow] = useState<boolean>(false);
+
+	const [allLoaded, setAllLoaded] = useState<boolean>(false); // If all existed data have been retrieved completely.
+
 	// For Handling Toast
-	const [isSubmit, setIsSubmit] = useState(false);
-	const [showToast, setShowToast] = useState(false);
-	const [toastMsg, setToastMsg] = useState("");
-	
-	const handleShowFilesPickWindow = (e) => {
+	const [isSubmit, setIsSubmit] = useState<boolean>(false);
+	const [showToast, setShowToast] = useState<boolean>(false);
+	const [toastMsg, setToastMsg] = useState<string>("");
+
+	const handleShowFilesPickWindow = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		setShowFilesPickWindow(!showFilesPickWindow);
 	};
-	
-	const handleShowImagesPickWindow = (e) => {
+
+	const handleShowImagesPickWindow = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		setShowImagesPickWindow(!showImagesPickWindow);
 	};
 
-	const changeFileStatus = (e) => {
+	const changeFileStatus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		setUploadFile(!uploadFile);
 	};
-	
-	const changeImageStatus = (e) => {
+
+	const changeImageStatus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		setUploadImage(!uploadImage);
 	};
-	
-	const changeCategoryStatus = (e) => {
+
+	const changeCategoryStatus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		setAddCategory(!addCategory);
 	};
-	
-  const changeTitle = (e) => {
-    setTitle(e.target.value);
-  };
 
-  const changeLevel = (e) => {
-    setLevel(e.target.value);
-  };
+	const changeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setTitle(e.target.value);
+	};
 
-  const changeDesc = (e) => {
-    setDesc(e.target.value);
-  };
+	const changeLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setLevel(e.target.value);
+	};
 
-  const changeSelectedCategory = (e) => {
-    setSelectedCategory(e.target.value);
-  };
-	
-	const changeNewCategory = (e) => {
-    setNewCategory(e.target.value);
-  };
+	const changeDesc = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setDesc(e.target.value);
+	};
 
-  const changeFile = (e) => {
-    if (e.target.files[0] != null && e.target.accept.includes(e.target.files[0].type)) {
-      setFileName(e.target.files[0].name);
-      setFile(e.target.files[0]);
-    } else {
-			e.target.value = null;
-      setFileName("Upload PDF file");
-      setFile(null);
-    }
-  };
+	const changeSelectedCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setSelectedCategory(e.target.value);
+	};
 
-  const changeImage = (e) => {
-    if (e.target.files[0] != null && e.target.accept.includes(e.target.files[0].type)) {
-      setImageName(e.target.files[0].name);
-      setImage(e.target.files[0]);
-    } else {
-			e.target.value = null;
-      setImageName("Upload Thumbnail");
-      setImage(null);
-    }
-  };
-	
-	const changeSelectedExistedFile = (e) => {
-		let existedFileAttr = JSON.parse(e.currentTarget.getAttribute('value'));
+	const changeNewCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setNewCategory(e.target.value);
+	};
+
+	const changeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files != null) {
+			if (e.target.accept.includes(e.target.files[0].type)) {
+				setFileName(e.target.files[0].name);
+				setFile(e.target.files[0]);
+			} else {
+				e.target.value = "";
+				setFileName("Upload PDF file");
+				setFile(null);
+			}
+		}
+	};
+
+	const changeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files != null) {
+			if (e.target.accept.includes(e.target.files[0].type)) {
+				setImageName(e.target.files[0].name);
+				setImage(e.target.files[0]);
+			} else {
+				e.target.value = "";
+				setImageName("Upload Thumbnail");
+				setImage(null);
+			}
+		}
+	};
+
+	const changeSelectedExistedFile = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		let existedFileAttr = JSON.parse(e.currentTarget.getAttribute('value') ?? '');
 		setSelectedExistedFile(existedFileAttr[0]);
 		setSelectedExistedFileName(existedFileAttr[1]);
 		setShowFilesPickWindow(false);
 	};
-	
-	const changeSelectedExistedImage = (e) => {
-		let existedImageAttr = JSON.parse(e.currentTarget.getAttribute('value'));
+
+	const changeSelectedExistedImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		let existedImageAttr = JSON.parse(e.currentTarget.getAttribute('value') ?? '');
 		setSelectedExistedImage(existedImageAttr[0]);
 		setSelectedExistedImageName(existedImageAttr[1]);
 		setShowImagesPickWindow(false);
 	};
-	
+
 	const handleToast = () => {
 		setShowToast(true);
 		setTimeout(() => setShowToast(false), 5000);
 	};
-	
+
 	const getFilesImages = async () => {
 		const pattern = /Avatar-[\w]*.[A-Za-z]*/;
 		try {
 			const response = await fetch(`${process.env.STRAPI_URL}/api/upload/files`);
-			const res_json = await response.json();
+			const res_json: StrapiFile[] = await response.json();
 			setExistedFiles(res_json.filter((rec) => rec.ext.includes("pdf") || rec.ext.includes("PDF")));
 			setExistedImages(res_json.filter((rec) => !rec.ext.includes("pdf") && !rec.ext.includes("PDF") && !pattern.test(rec.name)));
-		} catch (err) {
+		} catch (err: any) {
 			return new Error(err.message);
 		}
 	}
-	
-  const getCategories = async () => {
+
+	const getCategories = async () => {
 		const response = await fetch(`${process.env.STRAPI_URL}/api/categories?sort=Category`);
 		const res_json = await response.json();
-    const data = await res_json.data;
-    setCategories(data);
+		const data = await res_json.data;
+		setCategories(data);
 		if (data.length > 0) {
 			setSelectedCategory(data[0].id);
 		} else {
 			setSelectedCategory("");
 		}
-  };
-	
+	};
+
 	const getRequiredData = async () => {
 		await getCategories();
 		await getFilesImages();
 		setAllLoaded(true);
 	};
 
-  const handleAdd = async (e) => {
-    e.preventDefault();
-		let isComplete = title && desc && (selectedCategory || newCategory) && 
-		((file && uploadFile) || (selectedExistedFile && !uploadFile)) && 
-		((image && uploadImage) || (selectedExistedImage && !uploadImage));
-    try {
+	const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		let isComplete = title && desc && (selectedCategory || newCategory) &&
+			((file && uploadFile) || (selectedExistedFile && !uploadFile)) &&
+			((image && uploadImage) || (selectedExistedImage && !uploadImage));
+		try {
 			if (isComplete) {
 				setIsSubmit(true);
 				const formData = new FormData();
 				if (uploadFile) {
-					formData.append("files", file);
-					formData.append("newFile", 1);
+					if (file != null) {
+						formData.append("files", file);
+						formData.append("newFile", "1");
+					}
 				} else {
-					formData.append("files", selectedExistedFile);
-					formData.append("newFile", 0);
+					if (selectedExistedFile != null) {
+						formData.append("files", selectedExistedFile.toString());
+						formData.append("newFile", "0");
+					}
 				}
-				
+
 				if (uploadImage) {
-					formData.append("files", image);
-					formData.append("newImage", 1);
+					if (image != null) {
+						formData.append("files", image);
+						formData.append("newImage", "1");
+					}
 				} else {
-					formData.append("files", selectedExistedImage);
-					formData.append("newImage", 0);
+					if (selectedExistedImage != null) {
+						formData.append("files", selectedExistedImage.toString());
+						formData.append("newImage", "0");
+					}
 				}
-				
+
 				formData.append("title", title);
 				formData.append("level", level);
 				if (!addCategory) {
 					formData.append("category", selectedCategory);
-					formData.append("newCategory", 0);
+					formData.append("newCategory", "0");
 				} else {
 					formData.append("category", newCategory);
-					formData.append("newCategory", 1);
+					formData.append("newCategory", "1");
 				}
 				formData.append("desc", desc);
 
@@ -196,7 +209,7 @@ const page = () => {
 					method: "POST",
 					body: formData,
 				});
-		
+
 				if (response.ok) {
 					router.push("/admin/our-programs");
 				} else {
@@ -209,86 +222,86 @@ const page = () => {
 				setToastMsg("Incomplete inputs");
 				handleToast();
 			}
-    } catch (error) {
+		} catch (error) {
 			setIsSubmit(false);
 			setToastMsg("Something's wrong");
 			handleToast();
 		}
-  };
+	};
 
-  useEffect(() => {
-    getRequiredData();
-  }, []);
+	useEffect(() => {
+		getRequiredData();
+	}, []);
 
-  return (
-    <>
-			{(isSubmit || !allLoaded) && 
-			<BlockBackground bgColor="bg-neutral-500/[0.5]">
-				<Spinner />
-			</BlockBackground>}
-			
+	return (
+		<>
+			{(isSubmit || !allLoaded) &&
+				<BlockBackground bgColor="bg-neutral-500/[0.5]">
+					<Spinner />
+				</BlockBackground>}
+
 			{showToast && <Toast message={toastMsg} />}
-			
-			{showFilesPickWindow && 
-			<BlockBackground bgColor="bg-neutral-500/[0.5]">
-				<FileCards fileType="pdf" files={existedFiles} onFileSelected={changeSelectedExistedFile} onClose={() => setShowFilesPickWindow(false)} />
-			</BlockBackground>}
-			
-			{showImagesPickWindow && 
-			<BlockBackground bgColor="bg-neutral-500/[0.5]">
-				<FileCards fileType="image" files={existedImages} onImageSelected={changeSelectedExistedImage} onClose={() => setShowImagesPickWindow(false)} />
-			</BlockBackground>}
-			
+
+			{showFilesPickWindow &&
+				<BlockBackground bgColor="bg-neutral-500/[0.5]">
+					<FileCards fileType="pdf" files={existedFiles} onFileSelected={changeSelectedExistedFile} onClose={() => setShowFilesPickWindow(false)} />
+				</BlockBackground>}
+
+			{showImagesPickWindow &&
+				<BlockBackground bgColor="bg-neutral-500/[0.5]">
+					<FileCards fileType="image" files={existedImages} onImageSelected={changeSelectedExistedImage} onClose={() => setShowImagesPickWindow(false)} />
+				</BlockBackground>}
+
 			<Title title="Add a Program" />
 
-      <section className="flex justify-center mt-8 w-full">
-        <form
-          className="flex flex-row flex-wrap justify-between w-full gap-3 lg:gap-0"
-          onSubmit={handleAdd}
-        >
-          <div className="flex flex-col space-y-3 basis-[100%] lg:basis-[45%]">
-            <div className="flex flex-col space-y-2">
-              <label className="font-semibold" htmlFor="title">
-                Title <span className="text-red-500 font-semibold">*</span>
-              </label>
-              <input
-                type="text"
-                name="title"
-                id="title"
-                placeholder="Input title"
-                value={title}
+			<section className="flex justify-center mt-8 w-full">
+				<form
+					className="flex flex-row flex-wrap justify-between w-full gap-3 lg:gap-0"
+					onSubmit={handleAdd}
+				>
+					<div className="flex flex-col space-y-3 basis-[100%] lg:basis-[45%]">
+						<div className="flex flex-col space-y-2">
+							<label className="font-semibold" htmlFor="title">
+								Title <span className="text-red-500 font-semibold">*</span>
+							</label>
+							<input
+								type="text"
+								name="title"
+								id="title"
+								placeholder="Input title"
+								value={title}
 								required
-                onChange={(e) => changeTitle(e)}
-                className="border-neutral-500 border-2 rounded-md py-3 px-1"
-              />
-            </div>
-            <div className="flex flex-col space-y-2">
-              <label className="font-semibold" htmlFor="level">
-                Level <span className="text-red-500 font-semibold">*</span>
-              </label>
-              <select
-                name="level"
-                id="level"
-                value={level}
+								onChange={(e) => changeTitle(e)}
+								className="border-neutral-500 border-2 rounded-md py-3 px-1"
+							/>
+						</div>
+						<div className="flex flex-col space-y-2">
+							<label className="font-semibold" htmlFor="level">
+								Level <span className="text-red-500 font-semibold">*</span>
+							</label>
+							<select
+								name="level"
+								id="level"
+								value={level}
 								required
-                onChange={(e) => changeLevel(e)}
-                className="w-full py-3 rounded-md border-neutral-500 border-2"
-              >
-                <option key="Beginner" value="Beginner">
-                  Beginner
-                </option>
-                <option key="Intermediate" value="Intermediate">
-                  Intermediate
-                </option>
-                <option key="Advance" value="Advance">
-                  Advance
-                </option>
-              </select>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <label className="font-semibold" htmlFor="category">
-                Category <span className="text-red-500 font-semibold">*</span>
-              </label>
+								onChange={(e) => changeLevel(e)}
+								className="w-full py-3 rounded-md border-neutral-500 border-2"
+							>
+								<option key="Beginner" value="Beginner">
+									Beginner
+								</option>
+								<option key="Intermediate" value="Intermediate">
+									Intermediate
+								</option>
+								<option key="Advance" value="Advance">
+									Advance
+								</option>
+							</select>
+						</div>
+						<div className="flex flex-col space-y-2">
+							<label className="font-semibold" htmlFor="category">
+								Category <span className="text-red-500 font-semibold">*</span>
+							</label>
 							<div className="flex flex-row gap-2 w-full">
 								{!addCategory &&
 									<select
@@ -303,48 +316,48 @@ const page = () => {
 											<option key={choice.id} value={choice.id}>
 												{choice.Category}
 											</option>
-										)) : 
-										<option disabled>
-											No categories yet.
-										</option>}
+										)) :
+											<option disabled>
+												No categories yet.
+											</option>}
 									</select>
 								}
-								
-								{addCategory && 
+
+								{addCategory &&
 									<input type='text' placeholder='New category' required={addCategory} value={newCategory} onChange={changeNewCategory}
-									className="relative w-[80%] border-neutral-500 border-2 
+										className="relative w-[80%] border-neutral-500 border-2 
 									py-3 px-1 rounded-md text-black" />
 								}
 								<div className={`py-3 px-1 flex justify-center items-center cursor-pointer w-[20%] rounded-md
 								${addCategory ? "bg-[#242628] text-white" : "bg-neutral-200 text-black"}`}
-								onClick={changeCategoryStatus}>
+									onClick={changeCategoryStatus}>
 									{addCategory ? "New" : "Select"}
 								</div>
 							</div>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <label className="font-semibold" htmlFor="description">
-                Description <span className="text-red-500 font-semibold">*</span>
-              </label>
-              <textarea
-                name="description"
-                id="description"
-                placeholder="Input the description here"
-                rows={8}
-                cols={18}
-                onChange={(e) => changeDesc(e)}
-                value={desc}
+						</div>
+						<div className="flex flex-col space-y-2">
+							<label className="font-semibold" htmlFor="description">
+								Description <span className="text-red-500 font-semibold">*</span>
+							</label>
+							<textarea
+								name="description"
+								id="description"
+								placeholder="Input the description here"
+								rows={8}
+								cols={18}
+								onChange={(e) => changeDesc(e)}
+								value={desc}
 								required
-                className="border-neutral-500 border-2 rounded-md py-3 px-1 placeholder:text-center placeholder:translate-y-[100%]"
-              ></textarea>
-            </div>
-          </div>
+								className="border-neutral-500 border-2 rounded-md py-3 px-1 placeholder:text-center placeholder:translate-y-[100%]"
+							></textarea>
+						</div>
+					</div>
 
-          <div className="relative flex flex-col space-y-3 basis-[100%] lg:basis-[45%] mt-2 md:mt-0">
-            <div className="flex flex-col space-y-2">
-              <p className="font-semibold">
-                File <span className="text-red-500 font-semibold">*</span>
-              </p>
+					<div className="relative flex flex-col space-y-3 basis-[100%] lg:basis-[45%] mt-2 md:mt-0">
+						<div className="flex flex-col space-y-2">
+							<p className="font-semibold">
+								File <span className="text-red-500 font-semibold">*</span>
+							</p>
 							<div className="flex flex-row gap-2 w-full">
 								{uploadFile &&
 									<label
@@ -363,7 +376,7 @@ const page = () => {
 										/>
 									</label>
 								}
-								{!uploadFile && 
+								{!uploadFile &&
 									<div className="relative w-[80%] bg-neutral-200 border-neutral-200 border-2 
 									cursor-pointer py-3 px-1 rounded-md text-black" onClick={handleShowFilesPickWindow}>
 										<p className="absolute max-w-[80%] text-ellipsis text-nowrap overflow-clip">{selectedExistedFileName}</p>
@@ -371,17 +384,17 @@ const page = () => {
 								}
 								<div className={`py-3 px-1 flex justify-center items-center cursor-pointer w-[20%] rounded-md
 								${uploadFile ? "bg-[#242628] text-white" : "bg-neutral-200 text-black"}`}
-								onClick={changeFileStatus}>
+									onClick={changeFileStatus}>
 									{uploadFile ? "Upload" : "Pick"}
 								</div>
 							</div>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <p className="font-semibold">
-                Image <span className="text-red-500 font-semibold">*</span>
-              </p>
+						</div>
+						<div className="flex flex-col space-y-2">
+							<p className="font-semibold">
+								Image <span className="text-red-500 font-semibold">*</span>
+							</p>
 							<div className="flex flex-row gap-2 w-full">
-								{uploadImage  &&
+								{uploadImage &&
 									<label
 										htmlFor="image"
 										className="relative w-[80%] bg-[#242628] border-[#242628] border-2 
@@ -398,7 +411,7 @@ const page = () => {
 										/>
 									</label>
 								}
-								{!uploadImage && 
+								{!uploadImage &&
 									<div className="relative w-[80%] bg-neutral-200 border-neutral-200 border-2 
 									cursor-pointer py-3 px-1 rounded-md text-black" onClick={handleShowImagesPickWindow}>
 										<p className="absolute max-w-[80%] text-ellipsis text-nowrap overflow-clip">{selectedExistedImageName}</p>
@@ -406,20 +419,20 @@ const page = () => {
 								}
 								<div className={`py-3 px-1 flex justify-center items-center cursor-pointer w-[20%] rounded-md
 								${uploadImage ? "bg-[#242628] text-white" : "bg-neutral-200 text-black"}`}
-								onClick={changeImageStatus}>
+									onClick={changeImageStatus}>
 									{uploadImage ? "Upload" : "Pick"}
 								</div>
 							</div>
-            </div>
-            <div className="lg:absolute w-full flex flex-row justify-end gap-8 lg:bottom-0">
+						</div>
+						<div className="lg:absolute w-full flex flex-row justify-end gap-8 lg:bottom-0">
 							<CancelBtn href="/admin/our-programs" padding="py-2 px-5" fontWeight="font-semibold" text="Cancel" />
 							<ConfirmBtn btnType="submit" padding="py-2 px-5" fontWeight="font-semibold" text="Save" />
-            </div>
-          </div>
-        </form>
-      </section>
-    </>
-  );
+						</div>
+					</div>
+				</form>
+			</section>
+		</>
+	);
 };
 
-export default page;
+export default Page;

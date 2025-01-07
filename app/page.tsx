@@ -9,16 +9,16 @@ import AdminLogo from "./components/AdminLogo";
 import BlockBackground from "./components/BlockBackground";
 
 export default function Home() {
-	
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, togglePassword] = useState(false);
-  const [error, setError] = useState("");
-  const [showToast, setShowToast] = useState(false);
-	const [authorized, setAuthorized] = useState(true);
-	const [loading, setLoading] = useState(false);
-  const router = useRouter();
-	
+
+	const [email, setEmail] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+	const [showPassword, togglePassword] = useState<boolean>(false);
+	const [error, setError] = useState<string>("");
+	const [showToast, setShowToast] = useState<boolean>(false);
+	const [authorized, setAuthorized] = useState<boolean>(true);
+	const [loading, setLoading] = useState<boolean>(false);
+	const router = useRouter();
+
 	const checkValid = async () => {
 		const valid = await fetch("api/validate");
 		if (valid.status == 400) {
@@ -27,83 +27,84 @@ export default function Home() {
 			router.push("/admin/dashboard");
 		}
 	};
-	
+
 	useEffect(() => {
 		checkValid();
 	}, []);
 
-  const togglePasswordVisible = () => {
-    togglePassword(!showPassword);
-  };
+	const togglePasswordVisible = () => {
+		togglePassword(!showPassword);
+	};
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    setError("");
-  };
+	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setEmail(e.target.value);
+		setError("");
+	};
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    setError("");
-  };
+	const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setPassword(e.target.value);
+		setError("");
+	};
 
-  const handleToast = () => {
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 5000);
-  };
+	const handleToast = () => {
+		setShowToast(true);
+		setTimeout(() => setShowToast(false), 5000);
+	};
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
 		setLoading(true);
-    try {
-      const loginReq = await fetch("/api/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+		try {
+			const loginReq = await fetch("/api/auth", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email,
+					password,
+				}),
+			});
 
-      if (loginReq.status == 200) {
-        router.push("/admin/dashboard");
-      } else {
+			console.log(loginReq);
+
+			if (loginReq.status == 200) {
+				router.push("/admin/dashboard");
+			} else {
 				setLoading(false);
-        setError("Invalid email or password");
-        handleToast();
-      }
-    } catch (err) {
-      console.log(err.message);
+				setError("Invalid email or password");
+				handleToast();
+			}
+		} catch (err: any) {
+			console.log(err.message);
 			setLoading(false);
-      setError("Something's wrong");
-      handleToast();
-    }
-  };
-	
+			setError("Something's wrong");
+			handleToast();
+		}
+	};
+
 	if (authorized) {
-    return (
+		return (
 			<BlockBackground bgColor="bg-white">
-        <Spinner />
-      </BlockBackground>
-    );
-  }
-	
-  return (
-    <main className="flex items-center justify-center h-screen">
-      {showToast && (
-        <Toast message={error} />
-      )}
-			
+				<Spinner />
+			</BlockBackground>
+		);
+	}
+
+	return (
+		<main className="flex items-center justify-center h-full">
+			{showToast && (
+				<Toast message={error} />
+			)}
+
 			{loading &&
 				<BlockBackground bgColor="bg-white">
 					<Spinner />
 				</BlockBackground>
 			}
-			
-      <div className="min-[320px]:max-sm:w-4/5 sm:w-2/5">
+
+			<div className="min-[320px]:max-sm:w-4/5 sm:w-2/5">
 				<AdminLogo containerClassName="flex items-center flex-col pb-10 w-full" />
-				
 				<form method="POST" onSubmit={handleLogin}>
 					<label htmlFor="email" className="font-medium mb-4">
 						Email
@@ -115,7 +116,7 @@ export default function Home() {
 						id="email"
 						value={email}
 						required
-						onChange={(e) => handleEmailChange(e)}
+						onChange={handleEmailChange}
 						placeholder="Enter your email"
 						className="bg-neutral-100 rounded-md mb-3 h-10 p-4 w-full border-2"
 					/>
@@ -131,7 +132,7 @@ export default function Home() {
 							id="password"
 							value={password}
 							required
-							onChange={(e) => handlePasswordChange(e)}
+							onChange={handlePasswordChange}
 							placeholder="Enter your password"
 							className="bg-neutral-100 rounded-md h-full p-4 w-full mb-4 border-2"
 						/>
@@ -156,7 +157,7 @@ export default function Home() {
 						Log In
 					</button>
 				</form>
-      </div>
-    </main>
-  );
+			</div>
+		</main>
+	);
 }

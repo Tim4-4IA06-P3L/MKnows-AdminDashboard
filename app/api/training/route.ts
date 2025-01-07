@@ -3,11 +3,9 @@ import { parse } from "cookie";
 export async function POST(request: Request) {
 	const reqFormData = await request.formData();
 	const files = reqFormData.getAll("files");
-	let [title, level, category, desc] = [reqFormData.get('title'),
-																				reqFormData.get('level'),
-																				reqFormData.get('category'),
-																				reqFormData.get('desc')];
-	const isNewCategory = reqFormData.get("newCategory");
+	let [title, trainingType] = [reqFormData.get('title'), 
+                               reqFormData.get('trainingType')];
+	const isNewTraining = reqFormData.get("isNewTraining");
 	const isNewFile = reqFormData.get("newFile");
 	const isNewImage = reqFormData.get("newImage");
 	const cookies = parse(request.headers.get('cookie') || '');
@@ -48,6 +46,7 @@ export async function POST(request: Request) {
 				});
 				let res_json = await response.json();
 				filesIdArr.push(res_json[0].id);
+
 			} else if (isNewFile == "1" && isNewImage == "0") {
 				filesIdArr = ["0", files[1]];
 				let fileFormData = new FormData();
@@ -61,30 +60,13 @@ export async function POST(request: Request) {
 				});
 				let res_json = await response.json();
 				filesIdArr[0] = res_json[0].id;
+
 			} else {
 				filesIdArr = files;
 			}
 			
-			if (isNewCategory == "1") {
-				const categoryRes = await fetch(`${process.env.STRAPI_URL}/api/categories`, {
-					method: 'POST',
-					headers: {
-						"Content-Type": "application/json",
-						"Authorization": `Bearer ${token}`,
-					},
-					body: JSON.stringify({
-						"data": {
-							"Category": category
-						}
-					})
-				});
-				
-				const category_json = await categoryRes.json();
-				category = category_json.data.id;
-			}
-			
-			// POST the Program entry
-			const responseProgram = await fetch(`${process.env.STRAPI_URL}/api/our-programs`, {
+			// POST the Training entry
+			const responseTraining = await fetch(`${process.env.STRAPI_URL}/api/trainings`, {
 				method: 'POST',
 				headers: {
 					"Content-Type": "application/json",
@@ -93,16 +75,15 @@ export async function POST(request: Request) {
 				body: JSON.stringify({
 					"data": {
 						"Title": title,
-						"Level": level,
-						"Category": category,
-						"Description": desc,
+            "TrainingType": trainingType,
+            "NewTraining": isNewTraining == "1",
 						"Document": filesIdArr[0],
 						"Thumbnail": filesIdArr[1]
 					}
 				})
 			});
 			
-			return responseProgram;
+			return responseTraining;
 			
 		} else {
 			return new Response(JSON.stringify({ message: "Incomplete files upload!"}), {
@@ -121,17 +102,15 @@ export async function POST(request: Request) {
 			},
 		});
 	}
-}
+};
 
 export async function PUT(request: Request) {
 	const reqFormData = await request.formData();
-	const updateId = reqFormData.get('updateId');
+  const updateId = reqFormData.get('updateId');
 	const files = reqFormData.getAll("files");
-	let [title, level, category, desc] = [reqFormData.get('title'),
-																				reqFormData.get('level'),
-																				reqFormData.get('category'),
-																				reqFormData.get('desc')];
-	const isNewCategory = reqFormData.get("newCategory");
+	let [title, trainingType] = [reqFormData.get('title'), 
+                               reqFormData.get('trainingType')];
+	const isNewTraining = reqFormData.get("isNewTraining");
 	const isNewFile = reqFormData.get("newFile");
 	const isNewImage = reqFormData.get("newImage");
 	const cookies = parse(request.headers.get('cookie') || '');
@@ -172,6 +151,7 @@ export async function PUT(request: Request) {
 				});
 				let res_json = await response.json();
 				filesIdArr.push(res_json[0].id);
+
 			} else if (isNewFile == "1" && isNewImage == "0") {
 				filesIdArr = ["0", files[1]];
 				let fileFormData = new FormData();
@@ -185,30 +165,13 @@ export async function PUT(request: Request) {
 				});
 				let res_json = await response.json();
 				filesIdArr[0] = res_json[0].id;
+
 			} else {
 				filesIdArr = files;
 			}
 			
-			if (isNewCategory == "1") {
-				const categoryRes = await fetch(`${process.env.STRAPI_URL}/api/categories`, {
-					method: 'POST',
-					headers: {
-						"Content-Type": "application/json",
-						"Authorization": `Bearer ${token}`,
-					},
-					body: JSON.stringify({
-						"data": {
-							"Category": category
-						}
-					})
-				});
-				
-				const category_json = await categoryRes.json();
-				category = category_json.data.id;
-			}
-			
-			// PUT the Program entry
-			const responseProgram = await fetch(`${process.env.STRAPI_URL}/api/our-programs/${updateId}`, {
+			// PUT the Training entry
+			const responseTraining = await fetch(`${process.env.STRAPI_URL}/api/trainings/${updateId}`, {
 				method: 'PUT',
 				headers: {
 					"Content-Type": "application/json",
@@ -217,16 +180,15 @@ export async function PUT(request: Request) {
 				body: JSON.stringify({
 					"data": {
 						"Title": title,
-						"Level": level,
-						"Category": category,
-						"Description": desc,
+            "TrainingType": trainingType,
+            "NewTraining": isNewTraining == "1",
 						"Document": filesIdArr[0],
 						"Thumbnail": filesIdArr[1]
 					}
 				})
 			});
 			
-			return responseProgram;
+			return responseTraining;
 			
 		} else {
 			return new Response(JSON.stringify({ message: "Incomplete files upload!"}), {
@@ -275,21 +237,21 @@ export async function DELETE(request: Request) {
 		return deleteImageRes;
 	};
 	
-	const deleteProgram = async () => {
-		const deleteProgramRes = await fetch(`${process.env.STRAPI_URL}/api/our-programs/${deleteId}`, {
+	const deleteTraining = async () => {
+		const deleteTrainingRes = await fetch(`${process.env.STRAPI_URL}/api/trainings/${deleteId}`, {
 			method: 'DELETE',
 			headers: {
 				"Authorization": `Bearer ${process.env.API_TOKEN}`
 			}
 		});
-		return deleteProgramRes;
+		return deleteTrainingRes;
 	};
 	
 	if (auth_token) {
 		try {
-			const deleteProgramRes = await deleteProgram();
-			if (!deleteProgramRes.ok) {
-				return new Response(JSON.stringify({ "message": "Delete program failed. File and image are both remained." }), {
+			const deleteTrainingRes = await deleteTraining();
+			if (!deleteTrainingRes.ok) {
+				return new Response(JSON.stringify({ "message": "Delete training failed. File and image are both remained." }), {
 					status: 400
 				});
 			}
@@ -297,7 +259,7 @@ export async function DELETE(request: Request) {
 			if (deleteFileId){
 				const deleteFileRes = await deleteFile();
 				if (!deleteFileRes.ok) {
-					return new Response(JSON.stringify({ "message": "Delete file failed but program has been deleted." }), {
+					return new Response(JSON.stringify({ "message": "Delete file failed but training has been deleted." }), {
 						status: 400
 					});
 				}
@@ -306,7 +268,7 @@ export async function DELETE(request: Request) {
 			if (deleteImageId) {
 				const deleteImageRes = await deleteImage();
 				if (!deleteImageRes.ok) {
-					return new Response(JSON.stringify({ "message": "Delete image failed but both program and the file has been deleted." }), {
+					return new Response(JSON.stringify({ "message": "Delete image failed but both training and the file has been deleted." }), {
 						status: 400
 					});
 				}
@@ -326,4 +288,3 @@ export async function DELETE(request: Request) {
 		});
 	}
 }
-

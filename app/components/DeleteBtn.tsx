@@ -1,6 +1,14 @@
-import React from "react";
+import React, { FC } from "react";
 
-const DeleteBtn = ({ onClick, value, btnType, width, padding, fontWeight, text="Delete" }) => {
+const DeleteBtn: FC<{
+	onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>) => void,
+	value?: string,
+	btnType?: "button" | "submit" | "reset" | undefined,
+	width?: string,
+	padding?: string,
+	fontWeight?: string,
+	text?: string
+}> = ({ onClick, value, btnType, width, padding, fontWeight, text = "Delete" }) => {
 	return (
 		<button
 			type={btnType}

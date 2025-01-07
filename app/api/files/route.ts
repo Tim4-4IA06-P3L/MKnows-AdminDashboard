@@ -1,14 +1,14 @@
 import { parse } from "cookie";
 
-export async function DELETE(request) {
+export async function DELETE(request: Request) {
 	const cookies = parse(request.headers.get('cookie') || '');
 	const token = cookies.AdminJWT;
 	const resJson = await request.json();
 	
 	if (token) {
 		const responses = await Promise.all(
-			resJson.files.map(async (fileId) => {
-				let response = fetch(`${process.env.STRAPI_URL}/api/upload/files/${fileId}`, {
+			resJson.files.map(async (fileId: number) => {
+				let response = await fetch(`${process.env.STRAPI_URL}/api/upload/files/${fileId}`, {
 					method: 'DELETE',
 					headers: {
 						"Authorization": `Bearer ${process.env.API_TOKEN}`
@@ -27,7 +27,7 @@ export async function DELETE(request) {
 	}
 }
 
-export async function POST(request) {
+export async function POST(request: Request) {
 	const cookies = parse(request.headers.get('cookie') || '');
 	const token = cookies.AdminJWT;
 	const reqFormData = await request.formData();

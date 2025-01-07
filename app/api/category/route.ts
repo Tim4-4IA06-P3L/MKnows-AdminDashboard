@@ -1,6 +1,6 @@
 import { parse } from "cookie";
 
-export async function POST(request) {
+export async function POST(request: Request) {
 	const cookies = parse(request.headers.get('cookie') || '');
 	const token = cookies.AdminJWT;
 	
@@ -20,7 +20,7 @@ export async function POST(request) {
 	}
 }
 
-export async function PUT(request) {
+export async function PUT(request: Request) {
 	const cookies = parse(request.headers.get('cookie') || '');
 	const token = cookies.AdminJWT;
 	
@@ -46,7 +46,7 @@ export async function PUT(request) {
 	}
 }
 
-export async function DELETE(request) {
+export async function DELETE(request: Request) {
 	const cookies = parse(request.headers.get('cookie') || '');
 	const token = cookies.AdminJWT;
 	

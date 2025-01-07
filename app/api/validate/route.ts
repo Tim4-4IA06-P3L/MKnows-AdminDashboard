@@ -1,6 +1,6 @@
 import { serialize, parse } from "cookie";
 
-export async function GET(request) {
+export async function GET(request: Request) {
   const cookies = parse(request.headers.get('cookie') || '');
   const token = cookies.AdminJWT;
 

@@ -1,9 +1,14 @@
-import React from "react";
+import React, { FC } from "react";
 import Avatar from "./Avatar";
 import CancelBtn from "./CancelBtn";
 import BlockBackground from "./BlockBackground";
 
-const ProfilePhotoModal = ({avatarURL, onClose, onUpload, onRemove}) => {
+const ProfilePhotoModal: FC<{
+	avatarURL: string,
+	onClose: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+	onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void,
+	onRemove: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+}> = ({ avatarURL, onClose, onUpload, onRemove }) => {
 	return (
 		<BlockBackground bgColor="bg-neutral-500/[0.5]">
 			<div>
@@ -15,11 +20,11 @@ const ProfilePhotoModal = ({avatarURL, onClose, onUpload, onRemove}) => {
 						</svg>
 					</div>
 				</div>
-				
+
 				<div className="flex flex-col justify-start gap-3 p-5 bg-white rounded-b-md">
 					<div className="flex flex-row justify-around items-center gap-8">
-						<Avatar PhotoURL={avatarURL} className="border-[1px] border-black" />
-						
+						<Avatar PhotoURL={avatarURL} className="border-[1px] border-black" href="" />
+
 						<label htmlFor="photo"
 							className="relative p-2 bg-[#b3ff00] text-green-800 hover:bg-[#9ee004] cursor-pointer
 							active:ring-offset-2 active:ring-2 active:ring-neutral-800 rounded-md
@@ -27,8 +32,14 @@ const ProfilePhotoModal = ({avatarURL, onClose, onUpload, onRemove}) => {
 							<input type="file" title="" name="photo" id="photo" accept="image/jpg, image/jpeg, image/png, image/webp" onChange={onUpload}
 								className="w-full h-full opacity-0 absolute left-0 top-0 -z-1 file:h-full hover:cursor-pointer file:hover:cursor-pointer" />
 						</label>
-						
-						<CancelBtn padding="p-2" onClick={onRemove} text="Remove" />
+
+						<CancelBtn
+							padding="p-2"
+							onClick={onRemove}
+							text="Remove"
+							fontWeight=""
+							href=""
+						/>
 					</div>
 					<p className="self-end">Recommended size 1:1</p>
 				</div>

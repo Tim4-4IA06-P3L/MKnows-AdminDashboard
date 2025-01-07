@@ -1,12 +1,19 @@
-import React from "react";
+import React, { FC } from "react";
 import Image from "next/image";
 import Thumbnail from "./Thumbnail";
 import PDFThumbnail from "./PDFThumbnail";
 import FileDesc from "./FileDesc";
 import ViewFileCard from "./ViewFileCard";
 import ConfirmBtn from "./ConfirmBtn";
+import { StrapiFile } from "../Types";
 
-const FileCards = ({ fileType, files, onFileSelected, onImageSelected, onClose }) => {
+const FileCards: FC<{
+	fileType?: string,
+	files?: StrapiFile[] | null,
+	onFileSelected?: (e: React.MouseEvent<HTMLButtonElement>) => void,
+	onImageSelected?: (e: React.MouseEvent<HTMLButtonElement>) => void,
+	onClose?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+}> = ({ fileType, files, onFileSelected, onImageSelected, onClose }) => {
 	return (
 		<div className="relative max-w-[90%] max-h-[85%] overflow-y-auto bg-white rounded-md shadow-lg">
 			<div className="w-full h-[58px] rounded-t-md bg-neutral-100 flex flex-row justify-between items-center sticky top-0 z-[100]">
@@ -17,35 +24,62 @@ const FileCards = ({ fileType, files, onFileSelected, onImageSelected, onClose }
 					</svg>
 				</div>
 			</div>
-			{fileType == "image" ? 
+			{fileType == "image" ?
 				<div className="flex justify-center flex-wrap gap-3 md:gap-5 max-h-full p-5">
-					{files.map((file) => (
+					{files != null && files.map((file) => (
 						<div className="basis-[18%] flex flex-col justify-center items-center flex-shrink-1 flex-grow-1" key={file.id}>
 							<div className="relative w-[90px] sm:w-[180px] h-[50px] sm:h-[100px] flex justify-center z-0">
-								<Thumbnail src={`${process.env.STRAPI_URL}${file.url}`} width={file.width} height={file.height}
+								<Thumbnail src={`${file.url}`} width={file.width} height={file.height}
 									objectFit="cover" objectPosition="center"
 								/>
-								<ViewFileCard href={`${process.env.STRAPI_URL}${file.url}`} size="w-[90px] sm:w-[180px] h-[50px] sm:h-[100px]" />
+								<ViewFileCard href={`${file.url}`} size="w-[90px] sm:w-[180px] h-[50px] sm:h-[100px]" />
 							</div>
-							<FileDesc fileName={file.name} />
-							<ConfirmBtn value={`[${file.id}, "${file.name}"]`} onClick={onImageSelected} 
-								fontWeight="font-semibold" padding="p-1" text="Select"
+							<FileDesc
+								fileName={file.name}
+								selectMode={false}
+								checked={false}
+								value=""
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => { }}
+								fileType="image"
+							/>
+							<ConfirmBtn
+								btnType={undefined}
+								value={`[${file.id}, "${file.name}"]`}
+								onClick={onImageSelected}
+								fontWeight="font-semibold"
+								padding="p-1"
+								text="Select"
+								href=""
 							/>
 						</div>
 					))}
 				</div> :
 				<div className="flex flex-col justify-start gap-2 md:gap-5 max-h-full w-full overflow-x-hidden overflow-y-auto p-5">
-					{files.map((file) => (
+					{files != null && files.map((file) => (
 						<div className="flex flex-row items-center gap-1 w-full" key={file.id}>
 							<div className="relative w-[80px] h-[100px] flex justify-center z-0">
 								<PDFThumbnail />
-								<ViewFileCard href={`${process.env.STRAPI_URL}${file.url}`} size="w-[80px] h-[100px]" />
+								<ViewFileCard href={`${file.url}`} size="w-[80px] h-[100px]" />
 							</div>
-							
+
 							<div className="w-full flex flex-col justify-start">
-								<FileDesc fileType="pdf" fileName={file.name} />
-								<ConfirmBtn value={`[${file.id}, "${file.name}"]`} onClick={onFileSelected}
-								padding="p-1" text="Select" fontWeight="font-semibold" />
+								<FileDesc
+									fileType="pdf"
+									fileName={file.name}
+									selectMode={false}
+									checked={false}
+									value=""
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) => { }}
+								/>
+								<ConfirmBtn
+									value={`[${file.id}, "${file.name}"]`}
+									onClick={onFileSelected}
+									padding="p-1"
+									text="Select"
+									fontWeight="font-semibold"
+									btnType={undefined}
+									href=""
+								/>
 							</div>
 						</div>
 					))}

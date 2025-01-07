@@ -1,6 +1,14 @@
-import React from "react";
+import React, { FC } from "react";
 
-const ConfirmBtn = ({ value, onClick, btnType, href, padding, fontWeight, text }) => {
+const ConfirmBtn: FC<{
+	value?: string,
+	onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+	btnType?: "submit" | "reset" | "button" | undefined,
+	href?: string,
+	padding?: string,
+	fontWeight?: string,
+	text?: string
+}> = ({ value, onClick, btnType, href, padding, fontWeight, text }) => {
 	return (
 		<>
 			{!href ?
@@ -8,14 +16,14 @@ const ConfirmBtn = ({ value, onClick, btnType, href, padding, fontWeight, text }
 					className={`${padding} ${fontWeight} bg-[#b3ff00] w-max text-black hover:bg-[#9ee004] cursor-pointer 
 					active:ring-offset-2 active:ring-2 active:ring-neutral-800 rounded-md`}
 				>
-						{text}
+					{text}
 				</button> :
-				
+
 				<a href={href}
 					className={`${padding} ${fontWeight} bg-[#b3ff00] w-max text-black hover:bg-[#9ee004] cursor-pointer 
 					active:ring-offset-2 active:ring-2 active:ring-neutral-800 rounded-md`}
 				>
-						{text}
+					{text}
 				</a>
 			}
 		</>

@@ -1,11 +1,11 @@
 import { serialize } from "cookie";
 
-export async function POST(request) {
+export async function POST(request: Request) {
   const data = await request.json();
 	const email = data.email;
 	const password = data.password;
 	
-	const authenticateAdmin = async (email, password) => {
+	const authenticateAdmin = async (email: string, password: string) => {
 		const res = await fetch(`${process.env.STRAPI_URL}/admin/login`, {
 			method: 'POST',
 			headers: {
@@ -41,17 +41,26 @@ export async function POST(request) {
 				sameSite: "strict",
 				path: "/",
 			});
+
+			const headers = new Headers({
+				"Content-Type": "application/json",
+			});
+
+			headers.append("Set-Cookie", serialized_token);
+			headers.append("Set-Cookie", serialized_id);
 			
 			return new Response(JSON.stringify({ message: "Login Success"}), {
 				status: 200,
-				headers: {
-					"Content-Type": "application/json",
-					"Set-Cookie": [serialized_token, serialized_id]
-				},
+				headers: headers
+			});
+		} else {
+				return new Response(JSON.stringify({ message: "Invalid email or"}), {
+				status: 400,
+				headers: {"Content-Type": "application/json"},
 			});
 		}
 	} catch (err) {
-		return new Response(JSON.stringify({ message: "Invalid email or password"}), {
+		return new Response(JSON.stringify({ message: "Failed to authenticate"}), {
 			status: 400,
 			headers: {"Content-Type": "application/json"},
 		});

@@ -2,25 +2,24 @@
 import React, { useEffect, useState } from "react";
 import Title from "../../components/Title";
 
-const page = () => {
+const Page = () => {
 	const [username, setUsername] = useState("");
-	
+
 	const getUsername = async () => {
-		const response = await fetch('/api/me', { method: 'GET'});
+		const response = await fetch('/api/me', { method: 'GET' });
 		const res_json = await response.json();
-		setUsername(res_json.username);
+		setUsername(res_json.username ? `Halo, ${res_json.username}` : "Halo, Admin");
 	};
-	
+
 	useEffect(() => {
 		getUsername();
 	}, []);
-	
-  return (
-    <>
-			<Title title={`Halo, ${username} !`} />
-			<Title title="ANDA LIBUR, SAYA LEMBUR" />
-    </>
-  );
+
+	return (
+		<>
+			<Title title={username} />
+		</>
+	);
 };
 
-export default page;
+export default Page;

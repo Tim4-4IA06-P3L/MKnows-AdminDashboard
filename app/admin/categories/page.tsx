@@ -10,32 +10,33 @@ import Toast from "../../components/Toast";
 import Title from "../../components/Title";
 import BlockBackground from "../../components/BlockBackground";
 import Spinner from "../../components/Spinner";
+import { Category } from "@/app/Types";
 
-const page = () => {
-	const [categories, setCategories] = useState([0]);
-	const [newCategory, setNewCategory] = useState("");
-	const [editCategory, setEditCategory] = useState("");
-	const [showDeleteModal, setShowDeleteModal] = useState(false);
-	const [showEditModal, setShowEditModal] = useState(false);
-	const [deleteId, setDeleteId] = useState("");
-	const [editId, setEditId] = useState("");
-	const [toastMsg, setToastMsg] = useState("");
-	const [showToast, setShowToast] = useState(false);
-	const [allLoaded, setAllLoaded] = useState(false);
-	
-	const changeNewCategory = (e) => {
+const Page = () => {
+	const [categories, setCategories] = useState<(Category | number)[]>([0]);
+	const [newCategory, setNewCategory] = useState<string>("");
+	const [editCategory, setEditCategory] = useState<string>("");
+	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+	const [showEditModal, setShowEditModal] = useState<boolean>(false);
+	const [deleteId, setDeleteId] = useState<string>("");
+	const [editId, setEditId] = useState<string>("");
+	const [toastMsg, setToastMsg] = useState<string>("");
+	const [showToast, setShowToast] = useState<boolean>(false);
+	const [allLoaded, setAllLoaded] = useState<boolean>(false);
+
+	const changeNewCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setNewCategory(e.target.value);
 	};
-	
-	const changeEditCategory = (e) => {
+
+	const changeEditCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEditCategory(e.target.value);
 	};
-	
+
 	const handleToast = () => {
 		setShowToast(true);
 		setTimeout(() => setShowToast(false), 5000);
 	};
-	
+
 	const onCancelModal = () => {
 		setEditId("");
 		setEditCategory("");
@@ -43,17 +44,17 @@ const page = () => {
 		setShowDeleteModal(false);
 		setShowEditModal(false);
 	}
-	
-	const onDelete = (e) => {
-		setDeleteId(e.target.value);
+
+	const onDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>) => {
+		setDeleteId(e.currentTarget.getAttribute('value') ?? '');
 		setShowDeleteModal(true);
 	};
-	
-	const onEdit = (e) => {
-		setEditId(e.target.value);
+
+	const onEdit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>) => {
+		setEditId(e.currentTarget.getAttribute('value') ?? '');
 		setShowEditModal(true);
 	}
-	
+
 	const onDeleteModal = async () => {
 		const response = await fetch('/api/category', {
 			method: 'DELETE',
@@ -64,14 +65,19 @@ const page = () => {
 				documentId: deleteId
 			})
 		});
-		setCategories(categories.filter((rec) => rec.documentId != deleteId));
-		setDeleteId("");
-		setShowDeleteModal(false);
-		setToastMsg("Delete successful");
-		handleToast();
+		if (response.ok) {
+			setCategories(categories.filter((rec) => typeof rec != 'number' && rec.documentId != deleteId));
+			setDeleteId("");
+			setShowDeleteModal(false);
+			setToastMsg("Delete successful");
+			handleToast();
+		} else {
+			setToastMsg("Delete failed");
+			handleToast();
+		}
 	};
-	
-	const onEditModal = async (e) => {
+
+	const onEditModal = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const response = await fetch('/api/category', {
 			method: 'PUT',
@@ -83,15 +89,20 @@ const page = () => {
 				Category: editCategory
 			})
 		});
-		getCategories();
-		setEditId("");
-		setEditCategory("");
-		setShowEditModal(false);
-		setToastMsg("Edit successful");
-		handleToast();
+		if (response.ok) {
+			getCategories();
+			setEditId("");
+			setEditCategory("");
+			setShowEditModal(false);
+			setToastMsg("Edit successful");
+			handleToast();
+		} else {
+			setToastMsg("Edit failed");
+			handleToast();
+		}
 	};
-	
-	const addCategory = async (e) => {
+
+	const addCategory = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const response = await fetch('/api/category', {
 			method: 'POST',
@@ -104,59 +115,76 @@ const page = () => {
 				}
 			})
 		});
-		setNewCategory("");
-		getCategories();
-		setToastMsg("Add successful");
-		handleToast();
+		if (response.ok) {
+			setNewCategory("");
+			getCategories();
+			setToastMsg("Add successful");
+			handleToast();
+		} else {
+			setToastMsg("Add failed");
+			handleToast();
+		}
 	};
-	
+
 	const getCategories = async () => {
 		const response = await fetch(`${process.env.STRAPI_URL}/api/categories?populate=*&sort=Category`);
 		const res_json = await response.json();
 		setCategories(res_json.data);
 	};
-	
+
 	useEffect(() => {
 		getCategories();
 		setAllLoaded(true);
 	}, []);
-	
-  return (
-    <>
+
+	return (
+		<>
 			{showDeleteModal && (
-        <DeleteModal messageType="Delete Category?" modalType="category" 
-					onCancel={onCancelModal} onDelete={onDeleteModal}
+				<DeleteModal
+					messageType="Delete Category?"
+					modalType="category"
+					onCancel={onCancelModal}
+					onDelete={onDeleteModal}
 				/>
-      )}
-			
+			)}
+
 			{showEditModal && (
 				<EditCategoryModal value={editCategory} onChange={changeEditCategory} onCancel={onCancelModal} onEdit={onEditModal} />
-      )}
-			
+			)}
+
 			{showToast &&
 				<Toast message={toastMsg} error={false} />
 			}
-			
-			{!allLoaded && 
+
+			{!allLoaded &&
 				<BlockBackground bgColor="bg-neutral-500/[0.5]">
 					<Spinner />
 				</BlockBackground>
 			}
-			
+
 			<Title title="Categories" />
-			
+
 			<div className="w-full flex flex-col justify-center items-center">
 				{categories.length == 0 &&
 					<NoContentBox message="You haven't had any categories yet." />
 				}
-				
+
+				<form className="w-full bg-[#242628] text-white rounded-md p-5 m-5 gap-3 flex justify-between items-center"
+					onSubmit={addCategory}>
+					<input type="text" name="newCategory" id="newCategory"
+						className="rounded-md p-2 text-black" placeholder="Add new category" required
+						value={newCategory} onChange={changeNewCategory}
+					/>
+					<ConfirmBtn btnType="submit" padding="p-2" text="Add" />
+				</form>
+
 				{(categories[0] != 0 && categories.length > 0) &&
-					categories.map((rec) => (
+					categories.map((rec) => (typeof rec != 'number' &&
 						<div className="w-full bg-neutral-100 rounded-md p-5 m-5 gap-3 flex justify-between items-center" key={rec.documentId}>
 							<div>
 								<p className="font-semibold">{rec.Category}</p>
 								{
-									rec.programs.length > 0 && 
+									rec.programs.length > 0 &&
 									<p className="text-sm text-red-500">
 										This category has {rec.programs.length} linked program(s).
 									</p>
@@ -171,17 +199,9 @@ const page = () => {
 						</div>
 					))
 				}
-				<form className="w-full bg-[#242628] text-white rounded-md p-5 m-5 gap-3 flex justify-between items-center"
-				onSubmit={addCategory}>
-					<input type="text" name="newCategory" id="newCategory" 
-						className="rounded-md p-2 text-black" placeholder="Add new category" required
-						value={newCategory} onChange={changeNewCategory} 
-					/>
-					<ConfirmBtn btnType="submit" padding="p-2" text="Add" />
-				</form>
 			</div>
-    </>
-  );
+		</>
+	);
 };
 
-export default page;
+export default Page;
