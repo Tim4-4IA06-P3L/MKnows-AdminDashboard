@@ -143,15 +143,14 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     setSelectedExistedImageName(data.Thumbnail.name);
   };
 
-  const getRequiredData = async () => {
-    await getFilesImages();
-    await getTrainingData();
-    setAllLoaded(true);
-  };
-
   useEffect(() => {
+    const getRequiredData = async () => {
+      await getFilesImages();
+      await getTrainingData();
+      setAllLoaded(true);
+    };
     getRequiredData();
-  }, [allLoaded]);
+  }, []);
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

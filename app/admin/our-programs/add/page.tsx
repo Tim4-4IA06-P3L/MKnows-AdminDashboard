@@ -158,12 +158,6 @@ const Page = () => {
 		}
 	};
 
-	const getRequiredData = async () => {
-		await getCategories();
-		await getFilesImages();
-		setAllLoaded(true);
-	};
-
 	const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const isComplete = title && desc && (selectedCategory || newCategory) &&
@@ -234,8 +228,13 @@ const Page = () => {
 	};
 
 	useEffect(() => {
+		const getRequiredData = async () => {
+			await getCategories();
+			await getFilesImages();
+			setAllLoaded(true);
+		};
 		getRequiredData();
-	}, [allLoaded]);
+	}, []);
 
 	return (
 		<>

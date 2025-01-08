@@ -278,8 +278,14 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   };
 
   useEffect(() => {
+    const getRequiredData = async () => {
+      await getProgramById();
+      await getCategories();
+      await getFilesImages();
+      setAllLoaded(true);
+    };
     getRequiredData();
-  }, [allLoaded]);
+  }, []);
 
   return (
     <>

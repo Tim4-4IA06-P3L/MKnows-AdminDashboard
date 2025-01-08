@@ -23,19 +23,18 @@ export default function Layout({
   const [authorized, setAuthorized] = useState(false);
   const [loadLogOut, setLoadLogOut] = useState(false);
 
-  const checkAuthorized = async () => {
-    const valid = await fetch("/api/validate");
-    if (valid.status === 400) {
-      router.push("/");
-      return;
-    } else {
-      setAuthorized(true);
-    }
-  };
-
   useEffect(() => {
+    const checkAuthorized = async () => {
+      const valid = await fetch("/api/validate");
+      if (valid.status === 400) {
+        router.push("/");
+        return;
+      } else {
+        setAuthorized(true);
+      }
+    };
     checkAuthorized();
-  }, [authorized]);
+  }, [router]);
 
   const logOut = async (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     e.preventDefault();

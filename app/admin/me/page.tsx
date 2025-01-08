@@ -96,12 +96,6 @@ const Page = () => {
     );
   };
 
-  const getRequiredData = async () => {
-    await getMe();
-    await getPhotoURL();
-    setAllLoaded(true);
-  };
-
   const toggleHideOldPassword = () => {
     setHideOldPassword(!hideOldPassword);
   };
@@ -188,8 +182,13 @@ const Page = () => {
   };
 
   useEffect(() => {
+    const getRequiredData = async () => {
+      await getMe();
+      await getPhotoURL();
+      setAllLoaded(true);
+    };
     getRequiredData();
-  }, [getRequiredData]);
+  }, []);
 
   return (
     <>

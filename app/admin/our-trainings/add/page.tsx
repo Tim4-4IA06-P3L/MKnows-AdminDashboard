@@ -129,14 +129,13 @@ const Page = () => {
     }
   };
 
-  const getRequiredData = async () => {
-    await getFilesImages();
-    setAllLoaded(true);
-  };
-
   useEffect(() => {
+    const getRequiredData = async () => {
+      await getFilesImages();
+      setAllLoaded(true);
+    };
     getRequiredData();
-  }, [allLoaded]);
+  }, []);
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
