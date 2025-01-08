@@ -30,7 +30,7 @@ export default function Home() {
 
 	useEffect(() => {
 		checkValid();
-	}, []);
+	}, [authorized]);
 
 	const togglePasswordVisible = () => {
 		togglePassword(!showPassword);
@@ -75,8 +75,8 @@ export default function Home() {
 				setError("Invalid email or password");
 				handleToast();
 			}
-		} catch (err: any) {
-			console.log(err.message);
+		} catch (err) {
+			console.log(err);
 			setLoading(false);
 			setError("Something's wrong");
 			handleToast();

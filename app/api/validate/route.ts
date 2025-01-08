@@ -1,4 +1,4 @@
-import { serialize, parse } from "cookie";
+import { parse } from "cookie";
 
 export async function GET(request: Request) {
   const cookies = parse(request.headers.get('cookie') || '');

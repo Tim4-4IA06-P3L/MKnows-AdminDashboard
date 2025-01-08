@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import Image from "next/image";
 import Thumbnail from "./Thumbnail";
 import PDFThumbnail from "./PDFThumbnail";
 import FileDesc from "./FileDesc";
@@ -39,7 +38,6 @@ const FileCards: FC<{
 								selectMode={false}
 								checked={false}
 								value=""
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => { }}
 								fileType="image"
 							/>
 							<ConfirmBtn
@@ -69,7 +67,6 @@ const FileCards: FC<{
 									selectMode={false}
 									checked={false}
 									value=""
-									onChange={(e: React.ChangeEvent<HTMLInputElement>) => { }}
 								/>
 								<ConfirmBtn
 									value={`[${file.id}, "${file.name}"]`}

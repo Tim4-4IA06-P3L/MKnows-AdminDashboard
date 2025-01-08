@@ -41,19 +41,19 @@ const Page = () => {
   const [showToast, setShowToast] = useState<boolean>(false);
   const [toastMsg, setToastMsg] = useState<string>("");
 
-  const handleShowFilesPickWindow = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleShowFilesPickWindow = () => {
     setShowFilesPickWindow(!showFilesPickWindow);
   };
 
-  const handleShowImagesPickWindow = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleShowImagesPickWindow = () => {
     setShowImagesPickWindow(!showImagesPickWindow);
   };
 
-  const changeFileStatus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const changeFileStatus = () => {
     setUploadFile(!uploadFile);
   };
 
-  const changeImageStatus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const changeImageStatus = () => {
     setUploadImage(!uploadImage);
   };
 
@@ -96,14 +96,14 @@ const Page = () => {
   };
 
   const changeSelectedExistedFile = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    let existedFileAttr = JSON.parse(e.currentTarget.getAttribute('value') ?? '');
+    const existedFileAttr = JSON.parse(e.currentTarget.getAttribute('value') ?? '');
     setSelectedExistedFile(existedFileAttr[0]);
     setSelectedExistedFileName(existedFileAttr[1]);
     setShowFilesPickWindow(false);
   };
 
   const changeSelectedExistedImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    let existedImageAttr = JSON.parse(e.currentTarget.getAttribute('value') ?? '');
+    const existedImageAttr = JSON.parse(e.currentTarget.getAttribute('value') ?? '');
     setSelectedExistedImage(existedImageAttr[0]);
     setSelectedExistedImageName(existedImageAttr[1]);
     setShowImagesPickWindow(false);
@@ -121,8 +121,11 @@ const Page = () => {
       const res_json: StrapiFile[] = await response.json();
       setExistedFiles(res_json.filter((rec) => rec.ext.includes("pdf") || rec.ext.includes("PDF")));
       setExistedImages(res_json.filter((rec) => !rec.ext.includes("pdf") && !rec.ext.includes("PDF") && !pattern.test(rec.name)));
-    } catch (err: any) {
-      return new Error(err.message);
+    } catch (err) {
+      console.log(err);
+      setIsSubmit(false);
+      setToastMsg("Error fetching files");
+      handleToast();
     }
   };
 
@@ -133,11 +136,11 @@ const Page = () => {
 
   useEffect(() => {
     getRequiredData();
-  }, []);
+  }, [allLoaded]);
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let isComplete = title && trainingType &&
+    const isComplete = title && trainingType &&
       ((file && uploadFile) || (selectedExistedFile && !uploadFile)) &&
       ((image && uploadImage) || (selectedExistedImage && !uploadImage));
     try {
@@ -194,6 +197,7 @@ const Page = () => {
         handleToast();
       }
     } catch (error) {
+      console.log(error);
       setIsSubmit(false);
       setToastMsg("Something's wrong");
       handleToast();

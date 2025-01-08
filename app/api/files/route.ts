@@ -8,7 +8,7 @@ export async function DELETE(request: Request) {
 	if (token) {
 		const responses = await Promise.all(
 			resJson.files.map(async (fileId: number) => {
-				let response = await fetch(`${process.env.STRAPI_URL}/api/upload/files/${fileId}`, {
+				const response = await fetch(`${process.env.STRAPI_URL}/api/upload/files/${fileId}`, {
 					method: 'DELETE',
 					headers: {
 						"Authorization": `Bearer ${process.env.API_TOKEN}`
@@ -19,6 +19,8 @@ export async function DELETE(request: Request) {
 				}
 			}
 		));
+
+		console.log(responses);
 		
 		return new Response(JSON.stringify({ message: "Delete successful"}), { status: 200 });
 		

@@ -13,7 +13,7 @@ import { Category, StrapiFile } from "../../../Types";
 const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = React.use(params);
   const router = useRouter();
-  let oldData = useRef<JSON>(null);
+  const oldData = useRef<JSON>(null);
 
   const [title, setTitle] = useState<string>("");
   const [level, setLevel] = useState<string>("Beginner");
@@ -56,33 +56,23 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const [showToast, setShowToast] = useState<boolean>(false);
   const [toastMsg, setToastMsg] = useState<string>("");
 
-  const handleShowFilesPickWindow = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handleShowFilesPickWindow = () => {
     setShowFilesPickWindow(!showFilesPickWindow);
   };
 
-  const handleShowImagesPickWindow = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handleShowImagesPickWindow = () => {
     setShowImagesPickWindow(!showImagesPickWindow);
   };
 
-  const changeFileStatus = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const changeFileStatus = () => {
     setUploadFile(!uploadFile);
   };
 
-  const changeImageStatus = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const changeImageStatus = () => {
     setUploadImage(!uploadImage);
   };
 
-  const changeCategoryStatus = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const changeCategoryStatus = () => {
     setAddCategory(!addCategory);
   };
 
@@ -137,14 +127,14 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const changeSelectedExistedFile = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    let existedFileAttr = JSON.parse(e.currentTarget.getAttribute("value") ?? '');
+    const existedFileAttr = JSON.parse(e.currentTarget.getAttribute("value") ?? '');
     setSelectedExistedFile(existedFileAttr[0]);
     setSelectedExistedFileName(existedFileAttr[1]);
     setShowFilesPickWindow(false);
   };
 
   const changeSelectedExistedImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    let existedImageAttr = JSON.parse(e.currentTarget.getAttribute("value") ?? '');
+    const existedImageAttr = JSON.parse(e.currentTarget.getAttribute("value") ?? '');
     setSelectedExistedImage(existedImageAttr[0]);
     setSelectedExistedImageName(existedImageAttr[1]);
     setShowImagesPickWindow(false);
@@ -191,8 +181,11 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
             !pattern.test(rec.name)
         )
       );
-    } catch (err: any) {
-      return new Error(err.message);
+    } catch (err) {
+      console.log(err);
+      setIsSubmit(false);
+      setToastMsg("Error fetching files");
+      handleToast();
     }
   };
 
@@ -214,7 +207,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let isComplete =
+    const isComplete =
       title &&
       desc &&
       (selectedCategory || newCategory) &&
@@ -277,6 +270,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
         handleToast();
       }
     } catch (error) {
+      console.log(error);
       setIsSubmit(false);
       setToastMsg("Something's wrong");
       handleToast();
@@ -285,7 +279,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   useEffect(() => {
     getRequiredData();
-  }, []);
+  }, [allLoaded]);
 
   return (
     <>
@@ -379,7 +373,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
                     onChange={changeSelectedCategory}
                     className="relative w-[80%] border-2 border-neutral-500 cursor-pointer py-3 px-1 rounded-md text-black"
                   >
-                    {categories.map((choice: any) => (
+                    {categories.map((choice: Category) => (
                       <option key={choice.id} value={choice.id}>
                         {choice.Category}
                       </option>

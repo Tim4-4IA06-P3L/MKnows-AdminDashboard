@@ -32,7 +32,6 @@ const DeleteModal: FC<{
 							<div className="flex flex-row justify-around items-center gap-8 w-full h-full mt-2">
 								<CancelBtn onClick={onCancel} padding="py-2 px-5" fontWeight="" text="Cancel" href="" />
 								<DeleteBtn
-									onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>) => { }}
 									btnType="submit"
 									padding="py-2 px-5"
 									fontWeight="font-semibold"

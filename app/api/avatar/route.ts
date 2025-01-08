@@ -16,6 +16,7 @@ export async function GET(request: Request) {
 			}
 		});
 	} catch (err) {
+		console.log(err);
 		return new Response(JSON.stringify({ avatarURL: "" }), {
 			status: 200,
 			headers: {
@@ -118,7 +119,17 @@ export async function DELETE(request: Request) {
 					"Authorization": `Bearer ${process.env.API_TOKEN}`,
 				}
 			});
-			
+
+			if(!deleteAvatarRes.ok) {
+				return new Response(JSON.stringify({ message: "Delete old photo failed"}),
+				{
+					status: 400,
+					headers: {
+						"Content-Type": "application/json"
+					}
+				}
+			);
+			}
 			// Delete the record from the table
 			await sql`DELETE FROM avatar WHERE user_id = ${adminID};`;
 			

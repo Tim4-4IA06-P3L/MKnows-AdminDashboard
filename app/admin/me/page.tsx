@@ -59,16 +59,14 @@ const Page = () => {
     }
   };
 
-  const cancelUpload = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const cancelUpload = () => {
     setNewPhotoURL(oldPhotoURL.current);
     setNewPhotoExt("");
     setNewPhoto(null);
     setRemovePhoto(false);
   };
 
-  const changeRemovePhoto = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const changeRemovePhoto = () => {
     setRemovePhoto(true);
     setNewPhoto(null);
     setNewPhotoExt("");
@@ -125,14 +123,6 @@ const Page = () => {
     setTimeout(() => setShowToast(false), 5000);
   };
 
-  const reqUpdateData = async (formData: FormData) => {
-    const response = await fetch("/api/me", {
-      method: "PUT",
-      body: formData,
-    });
-    return response.status;
-  };
-
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmit(true);
@@ -149,6 +139,12 @@ const Page = () => {
         method: "POST",
         body: reqPhotoFormData,
       });
+
+      if (!photoResponse.ok){
+        setIsSubmit(false);
+        setToastMsg("Failed updating photo");
+        handleToast();
+      }
     }
 
     if (removePhoto) {
@@ -193,7 +189,7 @@ const Page = () => {
 
   useEffect(() => {
     getRequiredData();
-  }, []);
+  }, [getRequiredData]);
 
   return (
     <>

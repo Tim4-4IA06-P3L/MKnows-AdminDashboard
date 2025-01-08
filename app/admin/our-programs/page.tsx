@@ -43,7 +43,7 @@ const Page = () => {
     setShowModal(true);
   };
 
-  const confirmCancel = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const confirmCancel = () => {
     setDeleteFileStatus(false);
     setDeleteImageStatus(false);
     setDeleteId("");
@@ -52,11 +52,11 @@ const Page = () => {
     setShowModal(false);
   };
 
-  const changeDeleteFileCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const changeDeleteFileCheckbox = () => {
     setDeleteFileStatus(!deleteFileStatus);
   };
 
-  const changeDeleteImageCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const changeDeleteImageCheckbox = () => {
     setDeleteImageStatus(!deleteImageStatus);
   };
 
@@ -96,8 +96,8 @@ const Page = () => {
         setDeleteImageId("");
         setShowModal(false);
       }
-    } catch (err: any) {
-      console.log(err.message);
+    } catch (err) {
+      console.log(err);
       setDeleteFileStatus(false);
       setDeleteImageStatus(false);
       setDeleteId("");

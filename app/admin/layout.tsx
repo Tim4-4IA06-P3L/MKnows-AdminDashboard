@@ -35,7 +35,7 @@ export default function Layout({
 
   useEffect(() => {
     checkAuthorized();
-  }, []);
+  }, [authorized]);
 
   const logOut = async (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     e.preventDefault();

@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import AdminLogo from "./AdminLogo";
 import Avatar from "./Avatar";
 

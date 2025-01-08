@@ -60,6 +60,7 @@ export async function POST(request: Request) {
 			});
 		}
 	} catch (err) {
+		console.log(err);
 		return new Response(JSON.stringify({ message: "Failed to authenticate"}), {
 			status: 400,
 			headers: {"Content-Type": "application/json"},

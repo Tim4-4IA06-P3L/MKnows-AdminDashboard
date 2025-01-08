@@ -23,10 +23,6 @@ const EditCategoryModal: FC<{
 							btnType="submit"
 							padding="py-2 px-5"
 							fontWeight="font-semibold"
-							href=""
-							onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>) => { }}
-							width=""
-							value=""
 						/>
 					</div>
 				</form>

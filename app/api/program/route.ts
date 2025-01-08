@@ -1,17 +1,18 @@
 import { parse } from "cookie";
+import { constants } from "node:fs/promises";
 
 export async function POST(request: Request) {
 	const reqFormData = await request.formData();
 	const files = reqFormData.getAll("files");
-	let [title, level, category, desc] = [reqFormData.get('title'),
-																				reqFormData.get('level'),
-																				reqFormData.get('category'),
-																				reqFormData.get('desc')];
+	const [title, level, desc] = [reqFormData.get('title'),
+								  reqFormData.get('level'),
+								  reqFormData.get('desc')];
+	let category = reqFormData.get('category');
 	const isNewCategory = reqFormData.get("newCategory");
 	const isNewFile = reqFormData.get("newFile");
 	const isNewImage = reqFormData.get("newImage");
 	const cookies = parse(request.headers.get('cookie') || '');
-  const auth_token = cookies.AdminJWT;
+	const auth_token = cookies.AdminJWT;
 	
 	let filesIdArr: (null | FormDataEntryValue)[] = [null, null];
 	
@@ -22,44 +23,44 @@ export async function POST(request: Request) {
 			if (isNewFile == "1" && isNewImage == "1") {
 				filesIdArr = await Promise.all(
 					files.map(async (file) => {
-						let fileFormData = new FormData();
+						const fileFormData = new FormData();
 						fileFormData.append("files", file);
-						let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+						const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
 							method: 'POST',
 							headers: {
 								"Authorization": `Bearer ${token}`,
 							},
 							body: fileFormData
 						});
-						let res_json = await response.json();
+						const res_json = await response.json();
 						return res_json[0].id;
 					})
 				);
 			} else if (isNewFile == "0" && isNewImage == "1") {
 				filesIdArr = [files[0]];
-				let fileFormData = new FormData();
+				const fileFormData = new FormData();
 				fileFormData.append("files", files[1]);
-				let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+				const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
 					method: 'POST',
 					headers: {
 						"Authorization": `Bearer ${token}`,
 					},
 					body: fileFormData
 				});
-				let res_json = await response.json();
+				const res_json = await response.json();
 				filesIdArr.push(res_json[0].id);
 			} else if (isNewFile == "1" && isNewImage == "0") {
 				filesIdArr = ["0", files[1]];
-				let fileFormData = new FormData();
+				const fileFormData = new FormData();
 				fileFormData.append("files", files[0]);
-				let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+				const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
 					method: 'POST',
 					headers: {
 						"Authorization": `Bearer ${token}`,
 					},
 					body: fileFormData
 				});
-				let res_json = await response.json();
+				const res_json = await response.json();
 				filesIdArr[0] = res_json[0].id;
 			} else {
 				filesIdArr = files;
@@ -127,15 +128,15 @@ export async function PUT(request: Request) {
 	const reqFormData = await request.formData();
 	const updateId = reqFormData.get('updateId');
 	const files = reqFormData.getAll("files");
-	let [title, level, category, desc] = [reqFormData.get('title'),
-																				reqFormData.get('level'),
-																				reqFormData.get('category'),
-																				reqFormData.get('desc')];
+	const [title, level, desc] = [reqFormData.get('title'),
+								  reqFormData.get('level'),
+								  reqFormData.get('desc')];
+	let category = reqFormData.get('category');
 	const isNewCategory = reqFormData.get("newCategory");
 	const isNewFile = reqFormData.get("newFile");
 	const isNewImage = reqFormData.get("newImage");
 	const cookies = parse(request.headers.get('cookie') || '');
-  const auth_token = cookies.AdminJWT;
+	const auth_token = cookies.AdminJWT;
 	
 	let filesIdArr: (null | FormDataEntryValue)[] = [null, null];
 	
@@ -146,44 +147,44 @@ export async function PUT(request: Request) {
 			if (isNewFile == "1" && isNewImage == "1") {
 				filesIdArr = await Promise.all(
 					files.map(async (file) => {
-						let fileFormData = new FormData();
+						const fileFormData = new FormData();
 						fileFormData.append("files", file);
-						let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+						const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
 							method: 'POST',
 							headers: {
 								"Authorization": `Bearer ${token}`,
 							},
 							body: fileFormData
 						});
-						let res_json = await response.json();
+						const res_json = await response.json();
 						return res_json[0].id;
 					})
 				);
 			} else if (isNewFile == "0" && isNewImage == "1") {
 				filesIdArr = [files[0]];
-				let fileFormData = new FormData();
+				const fileFormData = new FormData();
 				fileFormData.append("files", files[1]);
-				let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+				const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
 					method: 'POST',
 					headers: {
 						"Authorization": `Bearer ${token}`,
 					},
 					body: fileFormData
 				});
-				let res_json = await response.json();
+				const res_json = await response.json();
 				filesIdArr.push(res_json[0].id);
 			} else if (isNewFile == "1" && isNewImage == "0") {
 				filesIdArr = ["0", files[1]];
-				let fileFormData = new FormData();
+				const fileFormData = new FormData();
 				fileFormData.append("files", files[0]);
-				let response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+				const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
 					method: 'POST',
 					headers: {
 						"Authorization": `Bearer ${token}`,
 					},
 					body: fileFormData
 				});
-				let res_json = await response.json();
+				const res_json = await response.json();
 				filesIdArr[0] = res_json[0].id;
 			} else {
 				filesIdArr = files;
@@ -253,7 +254,7 @@ export async function DELETE(request: Request) {
 	const deleteFileId = reqFormData.get('deleteFileId') || '';
 	const deleteImageId = reqFormData.get('deleteImageId') || '';
 	const cookies = parse(request.headers.get('cookie') || '');
-  const auth_token = cookies.AdminJWT;
+	const auth_token = cookies.AdminJWT;
 	
 	const deleteFile = async () => {
 		const deleteFileRes = await fetch(`${process.env.STRAPI_URL}/api/upload/files/${deleteFileId}`, {
@@ -316,6 +317,7 @@ export async function DELETE(request: Request) {
 			});
 			
 		} catch (err) {
+			console.log(err);
 			return new Response(JSON.stringify({ "message": "Request failed. Something's error happened" }), {
 				status: 400
 			});

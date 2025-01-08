@@ -1,5 +1,6 @@
 "use client";
 import React, { FC, useState } from "react";
+import Link from "next/link";
 import useViewportWidth from "./viewWidth";
 
 const Sidebar: FC<{ logOut: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => void }> = ({ logOut }) => {
@@ -27,11 +28,11 @@ const Sidebar: FC<{ logOut: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => 
 				<div className={`w-[90%] rounded-lg p-0.5 bg-[#FFFFFF] transform transition-transform duration-300 
 						${toggleDropMobile == 1 ? "bg-red-500 -translate-y-2 -rotate-45" : "bg-[FFFFFF] translate-y-0 rotate-0"}`}></div>
 			</div>
-			<ul className="text-white font-semibold ml-8 mt-32 space-y-8">
+			<ul className="text-white font-semibold ml-8 mt-16 space-y-8">
 				<li
 					className="text-white font-semibold cursor-pointer w-max hover:text-green-500"
 				>
-					<a href="/admin/dashboard" className="flex flex-row">
+					<Link href="/admin/dashboard" className="flex flex-row">
 						<div className="h-6 w-6 mr-3">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
 								<path d="M 12 2 A 1 1 0 0 0 11.289062 2.296875 L 1.203125 11.097656 A 0.5 0.5 0 0 0 1 11.5 A 0.5 0.5 0 0 0 1.5 12 L 4 12 L 4 20 C 4 20.552 4.448 21 5 21 L 9 21 C 9.552 21 10 20.552 10 20 L 10 14 L 14 14 L 14 20 C 14 20.552 14.448 21 15 21 L 19 21 C 19.552 21 20 20.552 20 20 L 20 12 L 22.5 12 A 0.5 0.5 0 0 0 23 11.5 A 0.5 0.5 0 0 0 22.796875 11.097656 L 12.716797 2.3027344 A 1 1 0 0 0 12.710938 2.296875 A 1 1 0 0 0 12 2 z"
@@ -39,12 +40,12 @@ const Sidebar: FC<{ logOut: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => 
 							</svg>
 						</div>
 						<p>Dashboard</p>
-					</a>
+					</Link>
 				</li>
 				<li
 					className="text-white font-semibold cursor-pointer w-max hover:text-green-500"
 				>
-					<a href="/admin/our-programs" className="flex flex-row">
+					<Link href="/admin/our-programs" className="flex flex-row">
 						<div className="h-6 w-6 mr-3">
 							<svg
 								viewBox="0 0 32 33"
@@ -58,12 +59,12 @@ const Sidebar: FC<{ logOut: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => 
 							</svg>
 						</div>
 						<p>Our Programs</p>
-					</a>
+					</Link>
 				</li>
 				<li
 					className="text-white font-semibold cursor-pointer w-max hover:text-green-500"
 				>
-					<a href="/admin/our-trainings" className="flex flex-row">
+					<Link href="/admin/our-trainings" className="flex flex-row">
 						<div className="h-6 w-6 mr-3">
 							<svg
 								fill="currentColor"
@@ -93,12 +94,12 @@ const Sidebar: FC<{ logOut: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => 
 							</svg>
 						</div>
 						<p>Our Trainings</p>
-					</a>
+					</Link>
 				</li>
 				<li
 					className="text-white font-semibold cursor-pointer w-max hover:text-green-500"
 				>
-					<a href="/admin/categories" className="flex flex-row">
+					<Link href="/admin/categories" className="flex flex-row">
 						<div className="h-6 w-6 mr-3">
 							<svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 								<g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
@@ -110,12 +111,12 @@ const Sidebar: FC<{ logOut: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => 
 							</svg>
 						</div>
 						<p>Categories</p>
-					</a>
+					</Link>
 				</li>
 				<li
 					className="text-white font-semibold cursor-pointer w-max hover:text-green-500"
 				>
-					<a href="/admin/uploads" className="flex flex-row">
+					<Link href="/admin/uploads" className="flex flex-row">
 						<div className="h-6 w-6 mr-3">
 							<svg viewBox="0 0 24 24"
 								fill="currentColor"
@@ -130,12 +131,12 @@ const Sidebar: FC<{ logOut: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => 
 							</svg>
 						</div>
 						<p>Uploads</p>
-					</a>
+					</Link>
 				</li>
 				<li
 					className="text-white font-semibold cursor-pointer w-max hover:text-green-500"
 				>
-					<a href="/admin/schedule" className="flex flex-row">
+					<Link href="/admin/schedule" className="flex flex-row">
 						<div className="h-6 w-6 mr-3">
 							<svg
 								viewBox="0 0 32 33"
@@ -149,7 +150,7 @@ const Sidebar: FC<{ logOut: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => 
 							</svg>
 						</div>
 						<p>Schedule</p>
-					</a>
+					</Link>
 				</li>
 			</ul>
 			<ul>
