@@ -278,7 +278,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
       setAllLoaded(true);
     };
     getRequiredData();
-  }, [getProgramById, getCategories, getFilesImages]);
+  }, []);
 
   return (
     <>

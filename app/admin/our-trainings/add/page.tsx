@@ -135,7 +135,7 @@ const Page = () => {
       setAllLoaded(true);
     };
     getRequiredData();
-  }, [getFilesImages]);
+  }, []);
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

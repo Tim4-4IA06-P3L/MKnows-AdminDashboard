@@ -34,7 +34,7 @@ export default function Layout({
       }
     };
     checkAuthorized();
-  }, [router]);
+  }, []);
 
   const logOut = async (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     e.preventDefault();

@@ -19,15 +19,6 @@ export default function Home() {
 	const [loading, setLoading] = useState<boolean>(false);
 	const router = useRouter();
 
-	const checkValid = async () => {
-		const valid = await fetch("api/validate");
-		if (valid.status == 400) {
-			setAuthorized(false);
-		} else {
-			router.push("/admin/dashboard");
-		}
-	};
-
 	useEffect(() => {
 		const checkValid = async () => {
 			const valid = await fetch("api/validate");
