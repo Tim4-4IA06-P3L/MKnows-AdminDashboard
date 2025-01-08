@@ -169,7 +169,7 @@ const Page = () => {
 					<NoContentBox message="You haven't had any categories yet." />
 				}
 
-				<form className="w-full bg-[#242628] text-white rounded-md p-5 m-5 gap-3 flex justify-between items-center"
+				<form className="w-full bg-[#242628] text-white rounded-md p-5 m-5 gap-3 flex justify-between items-center flex-wrap"
 					onSubmit={addCategory}>
 					<input type="text" name="newCategory" id="newCategory"
 						className="rounded-md p-2 text-black" placeholder="Add new category" required

@@ -155,7 +155,12 @@ const Page = () => {
                     <p className="text-justify min-[320px]:max-sm:static sm:hidden">
                       {rec.Level}
                     </p>
-                    <p className="text-justify min-[320px]:max-sm:hidden">
+                    <p className="text-justify min-[320px]:max-sm:hidden max-h-[80px] pr-2
+                      overflow-y-auto [&::-webkit-scrollbar]:w-1
+                      [&::-webkit-scrollbar]:h-2
+                      [&::-webkit-scrollbar-thumb]:bg-clip-content 
+                    [&::-webkit-scrollbar-thumb]:bg-[#b3ff00]"
+                    >
                       {rec.Description}
                     </p>
                   </div>

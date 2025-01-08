@@ -257,7 +257,7 @@ const Page = () => {
 								</div>
 								<p className="text-wrap text-center">Upload files <br />(accept .jpg, .jpeg, .png, .webp, .pdf)</p>
 								{numUpload != 0 &&
-									<p className="absolute bottom-[5%] right-[5%] text-wrap text-center">
+									<p className="absolute bottom-[5%] right-[5%] text-wrap text-center text-sm sm:text-md">
 										{`${numUpload} ${numUpload == 1 ? "file is" : "files are"} ready to be uploaded.`}
 									</p>
 								}
