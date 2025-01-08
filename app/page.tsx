@@ -29,8 +29,16 @@ export default function Home() {
 	};
 
 	useEffect(() => {
+		const checkValid = async () => {
+			const valid = await fetch("api/validate");
+			if (valid.status == 400) {
+				setAuthorized(false);
+			} else {
+				router.push("/admin/dashboard");
+			}
+		};
 		checkValid();
-	}, [authorized]);
+	}, []);
 
 	const togglePasswordVisible = () => {
 		togglePassword(!showPassword);

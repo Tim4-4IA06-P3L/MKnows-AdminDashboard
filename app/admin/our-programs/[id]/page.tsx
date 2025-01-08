@@ -198,13 +198,6 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     setCategories(data);
   };
 
-  const getRequiredData = async () => {
-    await getProgramById();
-    await getCategories();
-    await getFilesImages();
-    setAllLoaded(true);
-  };
-
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isComplete =
@@ -285,7 +278,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
       setAllLoaded(true);
     };
     getRequiredData();
-  }, []);
+  }, [getProgramById, getCategories, getFilesImages]);
 
   return (
     <>

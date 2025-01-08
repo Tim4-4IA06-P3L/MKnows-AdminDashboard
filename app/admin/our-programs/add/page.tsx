@@ -234,7 +234,7 @@ const Page = () => {
 			setAllLoaded(true);
 		};
 		getRequiredData();
-	}, []);
+	}, [getCategories, getFilesImages]);
 
 	return (
 		<>

@@ -150,7 +150,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
       setAllLoaded(true);
     };
     getRequiredData();
-  }, []);
+  }, [getFilesImages, getTrainingData]);
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
