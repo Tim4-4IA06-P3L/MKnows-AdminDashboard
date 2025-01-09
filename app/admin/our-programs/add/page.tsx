@@ -210,6 +210,7 @@ const Page = () => {
 				if (response.ok) {
 					router.push("/admin/our-programs");
 				} else {
+					response.json().then((res) => console.log(res.message));
 					setIsSubmit(false);
 					setToastMsg("Request failed");
 					handleToast();

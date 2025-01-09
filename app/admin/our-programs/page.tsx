@@ -20,6 +20,7 @@ const Page = () => {
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState<Array<Bootcamp | number>>([0]);
   const [allLoaded, setAllLoaded] = useState(false);
+  const [deleteProcess, setDeleteProcess] = useState<boolean>(false);
 
   const getPrograms = async () => {
     const programResponse = await fetch(
@@ -61,6 +62,8 @@ const Page = () => {
   };
 
   const confirmDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>) => {
+    setShowModal(false);
+    setDeleteProcess(true);
     e.preventDefault();
     try {
       const deleteFormData = new FormData();
@@ -119,7 +122,7 @@ const Page = () => {
         </BlockBackground>
       )}
 
-      {!allLoaded &&
+      {(!allLoaded || deleteProcess) &&
         <BlockBackground bgColor="bg-neutral-500/[0.5]">
           <Spinner />
         </BlockBackground>
