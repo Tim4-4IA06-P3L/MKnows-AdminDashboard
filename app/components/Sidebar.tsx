@@ -14,8 +14,8 @@ const Sidebar: FC<{ logOut: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => 
 	const width = useViewportWidth();
 
 	return (
-		<aside className={`transition-transform duration-300 linear bg-[#242628] float-left 
-				h-[90%] pr-8 w-[220px] flex flex-col justify-between fixed z-[100]
+		<aside className={`transition-transform duration-300 linear bg-[#242628] float-left
+				h-[90%] top-[15%] pr-8 w-[220px] flex flex-col justify-between fixed z-[100]
 				${(width < 768 && toggleDropMobile == 0) ? "-translate-x-[100%]" : "translate-x-0"}`}>
 			<div className={`cursor-pointer flex flex-col justify-center items-center
 					space-y-1 bg-[#242628] h-8 w-10 p-2 left-[100%] ${width < 768 ? "absolute" : "hidden"}
