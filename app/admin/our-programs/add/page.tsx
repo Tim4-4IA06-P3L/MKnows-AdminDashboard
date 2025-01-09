@@ -167,30 +167,57 @@ const Page = () => {
 			if (isComplete) {
 				setIsSubmit(true);
 				const formData = new FormData();
+				const fileFormData = new FormData();
+				const imageFormData = new FormData();
 				if (uploadFile) {
 					if (file != null) {
-						formData.append("files", file);
-						formData.append("newFile", "1");
+						fileFormData.append("files", file);
+						const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+							method: 'POST',
+							headers: {
+								"Authorization": `Bearer ${process.env.API_TOKEN}`,
+							},
+							body: fileFormData,
+						});
+						if (!response.ok) {
+							setIsSubmit(false);
+							setToastMsg("Upload PDF failed");
+							handleToast();
+						} else {
+							const resJson = await response.json();
+							formData.append("file", resJson[0].id);
+						}
 					}
 				} else {
 					if (selectedExistedFile != null) {
-						formData.append("files", selectedExistedFile.toString());
-						formData.append("newFile", "0");
+						formData.append("file", selectedExistedFile.toString());
 					}
 				}
 
 				if (uploadImage) {
 					if (image != null) {
-						formData.append("files", image);
-						formData.append("newImage", "1");
+						imageFormData.append("files", image);
+						const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
+							method: 'POST',
+							headers: {
+								"Authorization": `Bearer ${process.env.API_TOKEN}`,
+							},
+							body: imageFormData,
+						});
+						if (!response.ok) {
+							setIsSubmit(false);
+							setToastMsg("Upload image failed");
+							handleToast();
+						} else {
+							const resJson = await response.json();
+							formData.append("file", resJson[0].id);
+						}
 					}
 				} else {
 					if (selectedExistedImage != null) {
-						formData.append("files", selectedExistedImage.toString());
-						formData.append("newImage", "0");
+						formData.append("file", selectedExistedImage.toString());
 					}
 				}
-
 				formData.append("title", title);
 				formData.append("level", level);
 				if (!addCategory) {

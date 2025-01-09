@@ -72,8 +72,11 @@ const Page = () => {
 			for (let i = 0; i < uploadFiles.length; i++) {
 				reqFormData.append('files', uploadFiles[i]);
 			}
-			const response = await fetch('/api/files', {
+			const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
 				method: 'POST',
+				headers: {
+					"Authorization": `Bearer ${process.env.API_TOKEN}`
+				},
 				body: reqFormData
 			});
 

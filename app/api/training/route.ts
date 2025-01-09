@@ -2,68 +2,16 @@ import { parse } from "cookie";
 
 export async function POST(request: Request) {
 	const reqFormData = await request.formData();
-	const files = reqFormData.getAll("files");
+	const files = reqFormData.getAll("file");
 	const [title, trainingType] = [reqFormData.get('title'), 
 		                           reqFormData.get('trainingType')];
 	const isNewTraining = reqFormData.get("isNewTraining");
-	const isNewFile = reqFormData.get("newFile");
-	const isNewImage = reqFormData.get("newImage");
 	const cookies = parse(request.headers.get('cookie') || '');
 	const auth_token = cookies.AdminJWT;
-	
-	let filesIdArr: (null | FormDataEntryValue)[] = [null, null];
+	const token = process.env.API_TOKEN;
 	
 	if (auth_token) {
 		if (files.length == 2) {
-			const token = process.env.API_TOKEN;
-			// POST the media
-			if (isNewFile == "1" && isNewImage == "1") {
-				filesIdArr = await Promise.all(
-					files.map(async (file) => {
-						const fileFormData = new FormData();
-						fileFormData.append("files", file);
-						const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
-							method: 'POST',
-							headers: {
-								"Authorization": `Bearer ${token}`,
-							},
-							body: fileFormData
-						});
-						const res_json = await response.json();
-						return res_json[0].id;
-					})
-				);
-			} else if (isNewFile == "0" && isNewImage == "1") {
-				filesIdArr = [files[0]];
-				const fileFormData = new FormData();
-				fileFormData.append("files", files[1]);
-				const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
-					method: 'POST',
-					headers: {
-						"Authorization": `Bearer ${token}`,
-					},
-					body: fileFormData
-				});
-				const res_json = await response.json();
-				filesIdArr.push(res_json[0].id);
-
-			} else if (isNewFile == "1" && isNewImage == "0") {
-				filesIdArr = ["0", files[1]];
-				const fileFormData = new FormData();
-				fileFormData.append("files", files[0]);
-				const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
-					method: 'POST',
-					headers: {
-						"Authorization": `Bearer ${token}`,
-					},
-					body: fileFormData
-				});
-				const res_json = await response.json();
-				filesIdArr[0] = res_json[0].id;
-
-			} else {
-				filesIdArr = files;
-			}
 			
 			// POST the Training entry
 			const responseTraining = await fetch(`${process.env.STRAPI_URL}/api/trainings`, {
@@ -77,8 +25,8 @@ export async function POST(request: Request) {
 						"Title": title,
             "TrainingType": trainingType,
             "NewTraining": isNewTraining == "1",
-						"Document": filesIdArr[0],
-						"Thumbnail": filesIdArr[1]
+						"Document": files[0],
+						"Thumbnail": files[1]
 					}
 				})
 			});
@@ -107,68 +55,16 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
 	const reqFormData = await request.formData();
 	const updateId = reqFormData.get('updateId');
-	const files = reqFormData.getAll("files");
+	const files = reqFormData.getAll("file");
 	const [title, trainingType] = [reqFormData.get('title'), 
 		                           reqFormData.get('trainingType')];
 	const isNewTraining = reqFormData.get("isNewTraining");
-	const isNewFile = reqFormData.get("newFile");
-	const isNewImage = reqFormData.get("newImage");
 	const cookies = parse(request.headers.get('cookie') || '');
 	const auth_token = cookies.AdminJWT;
-	
-	let filesIdArr: (null | FormDataEntryValue)[] = [null, null];
+	const token = process.env.API_TOKEN;
 	
 	if (auth_token) {
 		if (files.length == 2) {
-			const token = process.env.API_TOKEN;
-			// POST the media
-			if (isNewFile == "1" && isNewImage == "1") {
-				filesIdArr = await Promise.all(
-					files.map(async (file) => {
-						const fileFormData = new FormData();
-						fileFormData.append("files", file);
-						const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
-							method: 'POST',
-							headers: {
-								"Authorization": `Bearer ${token}`,
-							},
-							body: fileFormData
-						});
-						const res_json = await response.json();
-						return res_json[0].id;
-					})
-				);
-			} else if (isNewFile == "0" && isNewImage == "1") {
-				filesIdArr = [files[0]];
-				const fileFormData = new FormData();
-				fileFormData.append("files", files[1]);
-				const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
-					method: 'POST',
-					headers: {
-						"Authorization": `Bearer ${token}`,
-					},
-					body: fileFormData
-				});
-				const res_json = await response.json();
-				filesIdArr.push(res_json[0].id);
-
-			} else if (isNewFile == "1" && isNewImage == "0") {
-				filesIdArr = ["0", files[1]];
-				const fileFormData = new FormData();
-				fileFormData.append("files", files[0]);
-				const response = await fetch(`${process.env.STRAPI_URL}/api/upload`, {
-					method: 'POST',
-					headers: {
-						"Authorization": `Bearer ${token}`,
-					},
-					body: fileFormData
-				});
-				const res_json = await response.json();
-				filesIdArr[0] = res_json[0].id;
-
-			} else {
-				filesIdArr = files;
-			}
 			
 			// PUT the Training entry
 			const responseTraining = await fetch(`${process.env.STRAPI_URL}/api/trainings/${updateId}`, {
@@ -182,8 +78,8 @@ export async function PUT(request: Request) {
 						"Title": title,
             "TrainingType": trainingType,
             "NewTraining": isNewTraining == "1",
-						"Document": filesIdArr[0],
-						"Thumbnail": filesIdArr[1]
+						"Document": files[0],
+						"Thumbnail": files[1]
 					}
 				})
 			});

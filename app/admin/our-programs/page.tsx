@@ -85,6 +85,7 @@ const Page = () => {
             (rec) => typeof rec != "number" && rec.documentId != deleteId
           )
         );
+        setDeleteProcess(false);
         setDeleteFileStatus(false);
         setDeleteImageStatus(false);
         setDeleteId("");
@@ -92,6 +93,7 @@ const Page = () => {
         setDeleteImageId("");
         setShowModal(false);
       } else {
+        setDeleteProcess(false);
         setDeleteFileStatus(false);
         setDeleteImageStatus(false);
         setDeleteId("");
@@ -101,6 +103,7 @@ const Page = () => {
       }
     } catch (err) {
       console.log(err);
+      setDeleteProcess(false);
       setDeleteFileStatus(false);
       setDeleteImageStatus(false);
       setDeleteId("");

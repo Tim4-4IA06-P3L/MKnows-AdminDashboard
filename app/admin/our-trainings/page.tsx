@@ -20,6 +20,7 @@ const Page = () => {
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState<Array<Training | number>>([0]);
   const [allLoaded, setAllLoaded] = useState(false);
+  const [deleteProcess, setDeleteProcess] = useState<boolean>(false);
 
   const getTrainings = async () => {
     const trainingResponse = await fetch(
@@ -62,6 +63,8 @@ const Page = () => {
 
   const confirmDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setShowModal(false);
+    setDeleteProcess(true);
     try {
       const deleteFormData = new FormData();
       deleteFormData.append('deleteId', deleteId);
@@ -82,6 +85,7 @@ const Page = () => {
             (rec) => typeof rec != "number" && rec.documentId != deleteId
           )
         );
+        setDeleteProcess(false);
         setDeleteFileStatus(false);
         setDeleteImageStatus(false);
         setDeleteId("");
@@ -89,6 +93,7 @@ const Page = () => {
         setDeleteImageId("");
         setShowModal(false);
       } else {
+        setDeleteProcess(false);
         setDeleteFileStatus(false);
         setDeleteImageStatus(false);
         setDeleteId("");
@@ -98,6 +103,7 @@ const Page = () => {
       }
     } catch (err) {
       console.log(err);
+      setDeleteProcess(false);
       setDeleteFileStatus(false);
       setDeleteImageStatus(false);
       setDeleteId("");
@@ -119,7 +125,7 @@ const Page = () => {
         </BlockBackground>
       )}
 
-      {!allLoaded &&
+      {(!allLoaded || deleteProcess) &&
         <BlockBackground bgColor="bg-neutral-500/[0.5]">
           <Spinner />
         </BlockBackground>

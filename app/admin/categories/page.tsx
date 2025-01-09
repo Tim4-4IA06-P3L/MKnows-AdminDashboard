@@ -23,6 +23,7 @@ const Page = () => {
 	const [toastMsg, setToastMsg] = useState<string>("");
 	const [showToast, setShowToast] = useState<boolean>(false);
 	const [allLoaded, setAllLoaded] = useState<boolean>(false);
+	const [processing, setProcessing] = useState<boolean>(false);
 
 	const changeNewCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setNewCategory(e.target.value);
@@ -56,6 +57,8 @@ const Page = () => {
 	}
 
 	const onDeleteModal = async () => {
+		setShowDeleteModal(false);
+		setProcessing(true);
 		const response = await fetch('/api/category', {
 			method: 'DELETE',
 			headers: {
@@ -66,12 +69,16 @@ const Page = () => {
 			})
 		});
 		if (response.ok) {
+			setShowDeleteModal(false);
+			setProcessing(false);
 			setCategories(categories.filter((rec) => typeof rec != 'number' && rec.documentId != deleteId));
 			setDeleteId("");
 			setShowDeleteModal(false);
 			setToastMsg("Delete successful");
 			handleToast();
 		} else {
+			setShowDeleteModal(false);
+			setProcessing(false);
 			setToastMsg("Delete failed");
 			handleToast();
 		}
@@ -79,6 +86,8 @@ const Page = () => {
 
 	const onEditModal = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		setShowEditModal(false);
+		setProcessing(true);
 		const response = await fetch('/api/category', {
 			method: 'PUT',
 			headers: {
@@ -91,12 +100,15 @@ const Page = () => {
 		});
 		if (response.ok) {
 			getCategories();
+			setProcessing(false);
 			setEditId("");
 			setEditCategory("");
 			setShowEditModal(false);
 			setToastMsg("Edit successful");
 			handleToast();
 		} else {
+			setProcessing(false);
+			setShowEditModal(false);
 			setToastMsg("Edit failed");
 			handleToast();
 		}
@@ -104,6 +116,7 @@ const Page = () => {
 
 	const addCategory = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		setProcessing(true);
 		const response = await fetch('/api/category', {
 			method: 'POST',
 			headers: {
@@ -116,11 +129,13 @@ const Page = () => {
 			})
 		});
 		if (response.ok) {
+			setProcessing(false);
 			setNewCategory("");
 			getCategories();
 			setToastMsg("Add successful");
 			handleToast();
 		} else {
+			setProcessing(false);
 			setToastMsg("Add failed");
 			handleToast();
 		}
@@ -156,7 +171,7 @@ const Page = () => {
 				<Toast message={toastMsg} error={false} />
 			}
 
-			{!allLoaded &&
+			{(!allLoaded || processing) &&
 				<BlockBackground bgColor="bg-neutral-500/[0.5]">
 					<Spinner />
 				</BlockBackground>
@@ -165,18 +180,18 @@ const Page = () => {
 			<Title title="Categories" />
 
 			<div className="w-full flex flex-col justify-center items-center">
-				{categories.length == 0 &&
-					<NoContentBox message="You haven't had any categories yet." />
-				}
-
 				<form className="w-full bg-[#242628] text-white rounded-md p-5 m-5 gap-3 flex justify-between items-center flex-wrap"
 					onSubmit={addCategory}>
 					<input type="text" name="newCategory" id="newCategory"
-						className="rounded-md p-2 text-black" placeholder="Add new category" required
+						className="rounded-md p-2 text-black w-[100%] sm:w-[50%]" placeholder="Add new category" required
 						value={newCategory} onChange={changeNewCategory}
 					/>
 					<ConfirmBtn btnType="submit" padding="p-2" text="Add" />
 				</form>
+
+				{categories.length == 0 &&
+					<NoContentBox message="You haven't had any categories yet." />
+				}
 
 				{(categories[0] != 0 && categories.length > 0) &&
 					categories.map((rec) => (typeof rec != 'number' &&
