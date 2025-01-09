@@ -56,7 +56,7 @@ export default function Layout({
   }
 
   return (
-    <main className={`${poppins.className} antialiased h-screen`}>
+    <main className={`${poppins.className} antialiased w-full h-full`}>
       {loadLogOut &&
         <BlockBackground bgColor="bg-neutral-500/[0.5]">
           <Spinner />

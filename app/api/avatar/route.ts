@@ -8,15 +8,14 @@ export async function GET(request: Request) {
 	
 	const response = await sql`SELECT * FROM avatar WHERE user_id = ${adminID};`;
 	
-	try {
+	if (response.length > 0) {
 		return new Response(JSON.stringify({ avatarURL: response[0].avatar_url }), {
 			status: 200,
 			headers: {
 				"Content-Type": "application/json",
 			}
 		});
-	} catch (err) {
-		console.log(err);
+	} else {
 		return new Response(JSON.stringify({ avatarURL: "" }), {
 			status: 200,
 			headers: {
