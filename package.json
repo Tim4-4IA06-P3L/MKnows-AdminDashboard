@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall":"export GOOGLE_APPLICATION_CREDENTIALS=app/private/M-Knows Consulting Website-fd04a63e2fb0.json"
+    "lint": "next lint"
   },
   "dependencies": {
     "@google-analytics/data": "^4.12.0",
