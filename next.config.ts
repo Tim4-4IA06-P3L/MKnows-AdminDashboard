@@ -16,6 +16,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+	outputFileTracingIncludes: {
+		'/api/ga': ['./private/*'],
+	}
 };
 
 export default nextConfig;
