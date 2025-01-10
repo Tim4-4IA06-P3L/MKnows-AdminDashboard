@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "app/api/ga/*": {
+      "includeFiles": "app/private/M-Knows-Consulting-Website-fd04a63e2fb0.json"
+    }
+  }
+}
