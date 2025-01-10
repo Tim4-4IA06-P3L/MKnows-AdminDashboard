@@ -17,7 +17,8 @@ const nextConfig: NextConfig = {
     ],
   },
 	outputFileTracingIncludes: {
-		'/api/ga': ['./private/*'],
+		'/api/ga/view_and_user': ['./private/*'],
+		'/api/ga/page_view': ['./private/*'],
 	}
 };
 
