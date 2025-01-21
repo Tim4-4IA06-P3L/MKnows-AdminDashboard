@@ -149,13 +149,13 @@ const Page = () => {
                   className="relative flex flex-row justify-start items-center w-full h-max bg-[#242628] p-3 pr-0 space-x-3 rounded-md"
                   key={rec.documentId}
                 >
-                  <div className="relative h-full basis-[20%] flex-shrink-0">
+                  <div className="relative h-full basis-[20%]">
                     <Thumbnail src={`${rec.Thumbnail.url}`} width={rec.Thumbnail.width}
                       height={rec.Thumbnail.height} objectFit="contain" objectPosition="center"
                     />
                   </div>
 
-                  <div className="text-white basis-[70%] text-wrap">
+                  <div className="text-white basis-[70%] text-wrap flex-shrink-1">
                     <p className="text-[12px]">{rec.Category.Category}</p>
                     <h3 className="font-bold text-lg">{rec.Title}</h3>
                     <p className="text-justify min-[320px]:max-sm:static sm:hidden">

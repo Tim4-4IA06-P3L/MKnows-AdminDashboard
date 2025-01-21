@@ -16,8 +16,8 @@ import NoContentBox from "../../components/NoContentBox";
 import { StrapiFile } from "@/app/Types";
 
 const Page = () => {
-	const [files, setFiles] = useState<StrapiFile[]>([]);
-	const [images, setImages] = useState<StrapiFile[]>([]);
+	const [files, setFiles] = useState<(StrapiFile | number)[]>([0]);
+	const [images, setImages] = useState<(StrapiFile | number)[]>([0]);
 	const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
 	const [uploadFiles, setUploadFiles] = useState<File[]>([]);
 	const [numUpload, setNumUpload] = useState<number>(0);
@@ -205,8 +205,8 @@ const Page = () => {
 							<NoContentBox message="You haven't had any images yet." />
 						}
 
-						{(!uploadMode && !pdfMode) &&
-							images.map((image) => (
+						{(!uploadMode && !pdfMode && images[0] != 0 && images.length > 0) &&
+							images.map((image) => (typeof image != 'number' &&
 								<div className="basis-[18%] flex flex-col justify-center items-center" key={image.id}>
 									<div className="relative w-[90px] sm:w-[180px] h-[50px] sm:h-[100px] flex justify-center z-0" >
 										<Thumbnail src={`${image.url}`} width={image.width}
@@ -224,8 +224,8 @@ const Page = () => {
 							))
 						}
 
-						{(!uploadMode && pdfMode) &&
-							files.map((file) => (
+						{(!uploadMode && pdfMode && files[0] != 0 && files.length > 0) &&
+							files.map((file) => (typeof file != 'number' &&
 								<div className="flex flex-row items-center gap-1 w-full" key={file.id}>
 									<div className="relative w-[80px] h-[100px] flex justify-center z-0">
 										<PDFThumbnail />

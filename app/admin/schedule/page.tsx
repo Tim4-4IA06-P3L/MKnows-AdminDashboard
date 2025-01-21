@@ -32,7 +32,7 @@ const Page = () => {
 				</BlockBackground>
 			}
 
-			{(schedule.length == 0 || schedule[0] == 0) && (
+			{(schedule.length == 0) && (
 				<NoContentBox message="No schedule request yet." />
 			)}
 
