@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Title from "../../components/Title";
 import {
 	Bar,
@@ -11,6 +11,7 @@ import {
 	LineChart,
 	ResponsiveContainer,
 	Tooltip,
+	TooltipProps,
 	XAxis,
 	YAxis
 } from "recharts";
@@ -67,7 +68,7 @@ const Page = () => {
 		runPageViewReport();
 	}, []);
 
-	const BarChartLabel: React.FC<IBarChartLabel> = ({
+	const BarChartLabel: FC<IBarChartLabel> = ({
 		x,
 		y,
 		value,
@@ -90,6 +91,30 @@ const Page = () => {
 				{value.length >= 18 ? value?.slice(0, 18) + "..." : value}
 			</text>
 		);
+	};
+
+	const CustomTooltip: FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
+		if (active && payload && payload.length) {
+			return (
+				<div
+					style={{
+						maxWidth: "30vw",
+						backgroundColor: "white",
+						border: "1px solid black",
+						padding: "8px"
+					}}
+				>
+					<p style={{ margin: 0, fontWeight: "bold" }}>{label}</p>
+					{payload.map((item, index) => (
+						<p key={index} style={{ margin: 0 }}>
+							{item.name}: {item.value}
+						</p>
+					))}
+				</div>
+			);
+		}
+
+		return null;
 	};
 
 	if (!username) {
@@ -115,7 +140,7 @@ const Page = () => {
 								<CartesianGrid strokeDasharray="3 3" />
 								<XAxis dataKey="date" />
 								<YAxis />
-								<Tooltip />
+								<Tooltip content={<CustomTooltip />} />
 								<Legend />
 								<Line dataKey="Views" type="natural" stroke="#000000" />
 								<Line dataKey="Users" type="natural" stroke="#00FF00" />
@@ -130,7 +155,7 @@ const Page = () => {
 								<CartesianGrid strokeDasharray="3 3" />
 								<YAxis dataKey="Title" type="category" axisLine={false} display="none" />
 								<XAxis type="number" />
-								<Tooltip />
+								<Tooltip content={<CustomTooltip />} />
 								<Bar dataKey="Views" fill="#000000">
 									<LabelList
 										dataKey="Title"
