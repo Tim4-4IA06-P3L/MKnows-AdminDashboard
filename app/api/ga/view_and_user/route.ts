@@ -1,23 +1,30 @@
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
 
 interface Data {
-	date: string,
-	Views: number,
-	Users: number,
-};
+  date: string;
+  Views: number;
+  Users: number;
+}
 
 export async function GET() {
-
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
-  const analyticsDataClient = new BetaAnalyticsDataClient();
+
+  const base64EncodedServiceAccount =
+    process.env.GOOGLE_CREDENTIALS_JSON_ENCODED || "";
+  const decodedServiceAccount = Buffer.from(
+    base64EncodedServiceAccount,
+    "base64"
+  ).toString("utf-8");
+  const credentials = JSON.parse(decodedServiceAccount);
+
+  const analyticsDataClient = new BetaAnalyticsDataClient({ credentials });
   const data: Data[] = [];
   const [response] = await analyticsDataClient.runReport({
     property: `properties/${process.env.PROPERTY_ID}`,
     dateRanges: [
       {
-        startDate: sevenDaysAgo.toISOString().split('T')[0],
+        startDate: sevenDaysAgo.toISOString().split("T")[0],
         endDate: "today",
       },
     ],
@@ -39,7 +46,10 @@ export async function GET() {
       const dataRow: Data = { date: "", Views: 0, Users: 0 };
 
       if (dateValue.length > 0) {
-        dataRow.date = `${dateValue[0].value?.slice(6, 8)}-${dateValue[0].value?.slice(4, 6)}`;
+        dataRow.date = `${dateValue[0].value?.slice(
+          6,
+          8
+        )}-${dateValue[0].value?.slice(4, 6)}`;
 
         if (metricValues.length > 0) {
           dataRow.Views = parseInt(metricValues[0].value || "0");
@@ -49,22 +59,28 @@ export async function GET() {
       }
     });
 
-    return new Response(JSON.stringify({
-      data: data
-    }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json"
+    return new Response(
+      JSON.stringify({
+        data: data,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
   } else {
-    return new Response(JSON.stringify({
-      data: []
-    }), {
-      status: 400,
-      headers: {
-        "Content-Type": "application/json"
+    return new Response(
+      JSON.stringify({
+        data: [],
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
-  };
+    );
+  }
 }
